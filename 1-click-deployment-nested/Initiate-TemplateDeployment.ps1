@@ -166,5 +166,5 @@
             $OptionalParameters | Sort-Object Name | Format-Table -AutoSize -Wrap -Expand EnumOnly
             Break
         }
+        Write-Host "`n Deployment Completed Successfully. Please verify the deployed resources through the Azure portal." -ForegroundColor Green
     }
-
