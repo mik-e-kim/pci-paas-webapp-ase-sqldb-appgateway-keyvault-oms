@@ -265,6 +265,8 @@
           }
         ],
         "sslPolicy": {
+          "policyType": "Custom",
+          "minProtocolVersion": "TLSv1_2",
           "disabledSslProtocols": [
             "TLSv1_0",
             "TLSv1_1"
