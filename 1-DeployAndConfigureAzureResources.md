@@ -19,8 +19,6 @@ This PowerShell script is used to deploy the Blueprint.
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1
     -resourceGroupName <String>
-    -globalAdminUserName <String>
-    -globalAdminPassword <String>
     -azureADDomainName <String>
     -subscriptionID <String>
     -suffix <String>
@@ -31,20 +29,17 @@ This PowerShell script is used to deploy the Blueprint.
 ```
 ### Deployment Timeline
 
-The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0 hours from when the script starts.
+The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0-2.5 hours from when the script starts.
 
- 
 ## Example 1: Simple deployment 
     
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1 
-    -resourceGroupName contosowebstore
-    -globalAdminUserName adminXX@contosowebstore.com 
-    -globalAdminPassword **************
-    -azureADDomainName contosowebstore.com 
+    -resourceGroupName webstore
+    -azureADDomainName webstore.com 
     -subscriptionID XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
-    -suffix PCIcontosowebstore
-    -sqlTDAlertEmailAddress edna@contosowebstore.com 
+    -suffix PCIwebstore
+    -sqlTDAlertEmailAddress support@webstore.com 
     -enableSSL 
 ```
 
@@ -54,28 +49,26 @@ This command creates the required Azure accounts and generates a self-signed cer
 
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1
-    -resourceGroupName contosowebstore
-    -globalAdminUserName adminXX@contosowebstore.com 
-    -globalAdminPassword **************
-    -azureADDomainName contosowebstore.com 
+    -resourceGroupName webstore
+    -azureADDomainName webstore.com 
     -subscriptionID XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
-    -suffix PCIcontosowebstore
-    -sqlTDAlertEmailAddress edna@contosowebstore.com 
-    -customHostName contosowebstore.com
+    -suffix PCIwebstore
+    -sqlTDAlertEmailAddress support@webstore.com 
+    -customHostName webstore.com
     -enableADDomainPasswordPolicy
 ```
 
 This command creates the required Azure accounts and generates a self-signed certificate for ASE ILB and Application Gateway SSL endpoint, using a provided custom domain and establishes a password policy for expiration in 60 days.
 
-## Required Parameters
+## Initiating the Deployment
 
-> -resourceGroupName <String>
+An Azure Active Directory (AAD) Global Administrator account will be required for initiating this deployment. This user must be a *Global Administrator* that has been granted full control of the default Azure Active Directory instance. The user must be in the `Azure Active Directory` domain namespace.
 
-Specifies the Resource Group name into which all resources will be deployed.
+In deploying this solution, four login prompts will be presented such that users' AAD Global Administrator account credentials are not captured and presented in the PowerShell console. 
 
-> -globalAdminUserName <String>
+As the deployment utilizes both the AzureRM and MSOnline PowerShell modules for monitoring and configuring the deployment, there are four login prompts (two sets for each MSOnline and AzureRM pair). 
 
-Specifies the AD Global admin. This user must be a *Global Administrator* that has been granted full control of the default Active Directory. The user must be in the `contosowebstore.com` domain namespace.
+Azure Active Directory Global Admininistrator credentials will not be presented in the PowerShell console, and is securely authenticated through web portal logins. 
 
 Role-based access control requires that an administrator grants themselves administrative rights in AAD. Refer to this blog for a detailed explanation.
 > [Delegating Admin Rights in Microsoft Azure](https://www.petri.com/delegating-admin-rights-in-microsoft-azure)
@@ -83,9 +76,11 @@ Role-based access control requires that an administrator grants themselves admin
 
 For more information, see [Script Details: 0-Setup-AdministrativeAccountAndPermission.ps1](./0-Setup-AdministrativeAccountAndPermission.md).
 
->-globalAdminPassword <String>
+## Required Parameters
 
-Specifies the password for the AD Global Admin.
+> -resourceGroupName <String>
+
+Specifies the Resource Group name into which all resources will be deployed.
 
 >-suffix <String>
 
