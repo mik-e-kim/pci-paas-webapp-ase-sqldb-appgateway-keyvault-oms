@@ -29,7 +29,7 @@ This PowerShell script is used to deploy the Blueprint.
 ```
 ### Deployment Timeline
 
-The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0 hours from when the script starts.
+The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0-2.5 hours from when the script starts.
 
 ## Example 1: Simple deployment 
     
