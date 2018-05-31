@@ -13,13 +13,14 @@
     [Parameter(Mandatory=$True)] 
     [string]$subscriptionID,
 
-    # Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
+    <# Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
     [Parameter(Mandatory=$True)] 
     [string]$globalAdminUserName, 
 
     # Provide password for Azure AD UserName.
     [Parameter(Mandatory=$True)]
     [string]$globalAdminPassword,
+    #>
 
     [string] [Parameter(Mandatory=$true)] 
 	$deploymentName,
@@ -98,9 +99,10 @@
         cd $PSScriptRoot
 
 
-        # Creating a Login credential.
+        <# Creating a Login credential.
         $secpasswd = ConvertTo-SecureString $globalAdminPassword -AsPlainText -Force
         $psCred = New-Object System.Management.Automation.PSCredential ($globalAdminUserName, $secpasswd)
+        #>
         
         ########### Establishing connection to Azure ###########
         try {
@@ -108,18 +110,19 @@
 
             # Connecting to MSOL Service
             Write-Host -ForegroundColor Yellow  "`t* Connecting to Msol service."
-            Connect-MsolService -Credential $psCred | Out-null
+            Connect-MsolService | Out-null
             if(Get-MsolDomain){
                 Write-Host -ForegroundColor Yellow "`t* Connection to Msol Service established successfully."
             }
             
             # Connecting to Azure Subscription
             Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
-            Login-AzureRmAccount -Credential $psCred -SubscriptionId $subscriptionID | Out-null
+            Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
             if(Get-AzureRmContext){
                 Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
             }
         }
+
         catch {
             Throw $_
         }
@@ -166,5 +169,5 @@
             $OptionalParameters | Sort-Object Name | Format-Table -AutoSize -Wrap -Expand EnumOnly
             Break
         }
+        Write-Host "`n Deployment Completed Successfully. Please verify the deployed resources through the Azure portal." -ForegroundColor Green
     }
-
