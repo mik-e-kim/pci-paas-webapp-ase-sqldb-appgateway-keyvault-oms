@@ -49,13 +49,14 @@ Param
         [string]
         $resourceGroupName,
 
-        # Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
+        <# Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
         [Parameter(Mandatory=$True)] 
         [string]$globalAdminUserName, 
 
         # Provide password for Azure AD UserName.
         [Parameter(Mandatory=$True)] 
         [string]$globalAdminPassword,
+	#>
 
         # Provide Azure AD Domain Name.
         [Parameter(Mandatory=$true)]
@@ -215,24 +216,25 @@ Begin
         $newPassword = New-RandomPassword
         $secNewPasswd = ConvertTo-SecureString $newPassword -AsPlainText -Force
 
-        # Creating a Login credential.
+        <# Creating a Login credential.
         $secpasswd = ConvertTo-SecureString $globalAdminPassword -AsPlainText -Force
         $psCred = New-Object System.Management.Automation.PSCredential ($globalAdminUserName, $secpasswd)
-        
+        #>
+	
         ########### Establishing connection to Azure ###########
         try {
             Write-Host -ForegroundColor Green "`nStep 2: Establishing connection to Azure AD,Subscription & Registering Resource Provider."
 
             # Connecting to MSOL Service
             Write-Host -ForegroundColor Yellow  "`t* Connecting to Msol service."
-            Connect-MsolService -Credential $psCred | Out-null
+            Connect-MsolService | Out-null
             if(Get-MsolDomain){
                 Write-Host -ForegroundColor Yellow "`t* Connection to Msol Service established successfully."
             }
             
             # Connecting to Azure Subscription
             Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
-            Login-AzureRmAccount -Credential $psCred -SubscriptionId $subscriptionID | Out-null
+            Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
             if(Get-AzureRmContext){
                 Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
             }
