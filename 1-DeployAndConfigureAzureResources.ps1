@@ -48,15 +48,7 @@ Param
         [ValidatePattern('^[\w]+$')]
         [string]
         $resourceGroupName,
-
-        # Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
-        [Parameter(Mandatory=$True)] 
-        [string]$globalAdminUserName, 
-
-        # Provide password for Azure AD UserName.
-        [Parameter(Mandatory=$True)] 
-        [string]$globalAdminPassword,
-
+	
         # Provide Azure AD Domain Name.
         [Parameter(Mandatory=$true)]
         [string]
@@ -221,18 +213,18 @@ Begin
         
         ########### Establishing connection to Azure ###########
         try {
-            Write-Host -ForegroundColor Green "`nStep 2: Establishing connection to Azure AD,Subscription & Registering Resource Provider."
+            Write-Host -ForegroundColor Green "`nStep 2: Establishing connection to Azure AD, Subscription & Registering Resource Provider."
 
             # Connecting to MSOL Service
             Write-Host -ForegroundColor Yellow  "`t* Connecting to Msol service."
-            Connect-MsolService -Credential $psCred | Out-null
+            Connect-MsolService | Out-null
             if(Get-MsolDomain){
                 Write-Host -ForegroundColor Yellow "`t* Connection to Msol Service established successfully."
             }
             
             # Connecting to Azure Subscription
             Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
-            Login-AzureRmAccount -Credential $psCred -SubscriptionId $subscriptionID | Out-null
+            Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
             if(Get-AzureRmContext){
                 Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
             }
@@ -469,7 +461,7 @@ Process
             Write-Host -ForegroundColor Green "`nStep 8: Initiating template deployment."
             # Submitting templte deployment to new powershell session
             Write-Host -ForegroundColor Yellow "`t* Submitting deployment"
-            Start-Process Powershell -ArgumentList "-NoExit", ".\1-click-deployment-nested\Initiate-TemplateDeployment.ps1 -subscriptionID $subscriptionID -globalAdminUserName $globalAdminUserName -globalAdminPassword $globalAdminPassword -deploymentName $deploymentName -resourceGroupName $resourceGroupName -location $location -templateFile '$scriptFolder\azuredeploy.json' -_artifactsLocation $_artifactsLocation -_artifactsLocationSasToken $_artifactsLocationSasToken -sslORnon_ssl $sslORnon_ssl -certData $certData -certPassword $certPassword -aseCertData $aseCertData -asePfxBlobString $asePfxBlobString -asePfxPassword $asePfxPassword -aseCertThumbprint $aseCertThumbprint -bastionHostAdministratorPassword $newPassword -sqlAdministratorLoginPassword $newPassword -sqlThreatDetectionAlertEmailAddress $SqlTDAlertEmailAddress -automationAccountName $automationaccname -customHostName $customHostName -azureAdApplicationClientId $azureAdApplicationClientId -azureAdApplicationClientSecret $newPassword -azureAdApplicationObjectId $azureAdApplicationObjectId -sqlAdAdminUserName $sqlAdAdminUserName -sqlAdAdminUserPassword $newPassword"
+            Start-Process Powershell -ArgumentList "-NoExit", ".\1-click-deployment-nested\Initiate-TemplateDeployment.ps1 -subscriptionID $subscriptionID -deploymentName $deploymentName -resourceGroupName $resourceGroupName -location $location -templateFile '$scriptFolder\azuredeploy.json' -_artifactsLocation $_artifactsLocation -_artifactsLocationSasToken $_artifactsLocationSasToken -sslORnon_ssl $sslORnon_ssl -certData $certData -certPassword $certPassword -aseCertData $aseCertData -asePfxBlobString $asePfxBlobString -asePfxPassword $asePfxPassword -aseCertThumbprint $aseCertThumbprint -bastionHostAdministratorPassword $newPassword -sqlAdministratorLoginPassword $newPassword -sqlThreatDetectionAlertEmailAddress $SqlTDAlertEmailAddress -automationAccountName $automationaccname -customHostName $customHostName -azureAdApplicationClientId $azureAdApplicationClientId -azureAdApplicationClientSecret $newPassword -azureAdApplicationObjectId $azureAdApplicationObjectId -sqlAdAdminUserName $sqlAdAdminUserName -sqlAdAdminUserPassword $newPassword"
             Write-Host "`t`t-> Waiting for deployment $deploymentName to submit.. " -ForegroundColor Yellow
             $count=0
             $status=1
