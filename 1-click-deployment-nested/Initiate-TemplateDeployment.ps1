@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
    This Powershell script takes input from parent script - Deploy-PCI-PaaS-Solution.ps1
    and initiate template deployment for PCI-PaaS Reference Architecture.
@@ -88,25 +88,26 @@
         Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted -Force
         $ErrorActionPreference = 'Stop'
         cd $PSScriptRoot
-
+        
         ########### Establishing connection to Azure ###########
         try {
             Write-Host -ForegroundColor Green "`nStep 1: Establishing connection to Azure AD & Subscription"
 
             # Connecting to MSOL Service
             Write-Host -ForegroundColor Yellow  "`t* Connecting to Msol service."
-            Connect-MsolService -Credential $psCred | Out-null
+            Connect-MsolService | Out-null
             if(Get-MsolDomain){
                 Write-Host -ForegroundColor Yellow "`t* Connection to Msol Service established successfully."
             }
             
             # Connecting to Azure Subscription
             Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
-            Login-AzureRmAccount -Credential $psCred -SubscriptionId $subscriptionID | Out-null
+            Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
             if(Get-AzureRmContext){
                 Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
             }
         }
+
         catch {
             Throw $_
         }
