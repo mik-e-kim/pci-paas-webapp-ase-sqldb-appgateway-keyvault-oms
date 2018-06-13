@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
    This Powershell script takes input from parent script - Deploy-PCI-PaaS-Solution.ps1
    and initiate template deployment for PCI-PaaS Reference Architecture.
@@ -12,15 +12,6 @@
     # Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
     [Parameter(Mandatory=$True)] 
     [string]$subscriptionID,
-
-    <# Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
-    [Parameter(Mandatory=$True)] 
-    [string]$globalAdminUserName, 
-
-    # Provide password for Azure AD UserName.
-    [Parameter(Mandatory=$True)]
-    [string]$globalAdminPassword,
-    #>
 
     [string] [Parameter(Mandatory=$true)] 
 	$deploymentName,
@@ -97,12 +88,6 @@
         Set-Executionpolicy -Scope CurrentUser -ExecutionPolicy UnRestricted -Force
         $ErrorActionPreference = 'Stop'
         cd $PSScriptRoot
-
-
-        <# Creating a Login credential.
-        $secpasswd = ConvertTo-SecureString $globalAdminPassword -AsPlainText -Force
-        $psCred = New-Object System.Management.Automation.PSCredential ($globalAdminUserName, $secpasswd)
-        #>
         
         ########### Establishing connection to Azure ###########
         try {
