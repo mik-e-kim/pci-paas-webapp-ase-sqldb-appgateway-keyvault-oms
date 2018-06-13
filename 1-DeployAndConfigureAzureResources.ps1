@@ -20,97 +20,120 @@ You will use appGatewaySslCertPath & appGatewaySslCertPwd parameter only when yo
     will require you to enter absolute path for your certificate pfx file. Make sure certificate is in .pfx format with password protected.
 
 Please note - By default, Application gateway will always communicate with App Service Environment using HTTPS.
-    
-USAGE 1, Create Azure AD Accounts, self-signed certificate for ASE ILB, customer provided customHostName, self-signed certificate for Application Gateway & setup password policy with 60 days.
-	
-    .\1-DeployAndConfigureAzureResources.ps1 -resourceGroupName contosowebstore -globalAdminUserName admin1@contoso.com -globalAdminPassword ********** -azureADDomainName contoso.com -subscriptionID xxxxxxx-f760-xxxx-bd98-xxxxxxxx -suffix PCIDemo -sqlTDAlertEmailAddress email@dummy.com -customHostName dummydomain.com -enableSSL -enableADDomainPasswordPolicy
-    
-USAGE 2, Create Azure AD Accounts, self-signed certificate for ASE ILB, default customHostName, self-signed certificate for Application Gateway & setup password policy with 60 days.
-	
-   .\1-DeployAndConfigureAzureResources.ps1 -resourceGroupName contosowebstore -globalAdminUserName admin1@contoso.com -globalAdminPassword ********** -azureADDomainName contoso.com -subscriptionID xxxxxxx-f760-xxxx-bd98-xxxxxxxx -suffix PCIDemo -sqlTDAlertEmailAddress email@dummy.com -enableSSL -enableADDomainPasswordPolicy
-
-USAGE 3,  Create Azure AD Accounts, customer provided customHostName & certificate for AppGateway SSL endpoint.
-
-    .\1-DeployAndConfigureAzureResources.ps1 -resourceGroupName contosowebstore -globalAdminUserName admin1@contoso.com -globalAdminPassword ********** -azureADDomainName contoso.com -subscriptionID xxxxxxx-f760-xxxx-bd98-xxxxxxxx -suffix PCIDemo -sqlTDAlertEmailAddress email@dummy.com -customHostName dummydomain.com -appGatewaySslCertPath 'C:\...pfx' -appGatewaySslCertPwd 'Pass' -enableSSL 
-
-USAGE 4,  Create Azure AD Accounts & self-signed certificate for ASE ILB with default customHostName only. (No HTTPS endpoint on Application Gateway.)
-
-    .\1-DeployAndConfigureAzureResources.ps1 -resourceGroupName contosowebstore -globalAdminUserName admin1@contoso.com -globalAdminPassword ********** -azureADDomainName contoso.com -subscriptionID xxxxxxx-f760-xxxx-bd98-xxxxxxxx -suffix PCIDemo -sqlTDAlertEmailAddress email@dummy.com
 
 #>
-[CmdletBinding()]
-Param
-    (
+
+###############################################################################################################################################################
+###                                             Initial User Prompts for required and optional parameters                                                   ###
+###############################################################################################################################################################
+
         # Provide resourceGroupName for deployment
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [ValidateLength(1,64)]
-        [ValidatePattern('^[\w]+$')]
-        [string]
-        $resourceGroupName,
-
-        <# Provide Azure AD UserName with Global Administrator permission on Azure AD and Service Administrator / Co-Admin permission on Subscription.
-        [Parameter(Mandatory=$True)] 
-        [string]$globalAdminUserName, 
-
-        # Provide password for Azure AD UserName.
-        [Parameter(Mandatory=$True)] 
-        [string]$globalAdminPassword,
-	#>
+        Write-Host "Name of the resource group to be created for this deployment." -ForegroundColor Yellow
+        $resourceGroupName = Read-Host "Resource Group Name"
+        
+        if ($resourceGroupName -eq "") {$resourceGroupName = Read-Host}
+        Write-Host ""
 
         # Provide Azure AD Domain Name.
-        [Parameter(Mandatory=$true)]
-        [string]
-        [ValidateNotNullOrEmpty()]
-        $azureADDomainName,
+        Write-Host "Name of the Azure Active Directory (AAD) domain associated to the Global Administrator account for deploying this solution." -ForegroundColor Yellow
+        $azureADDomainName = Read-Host "Azure Active Directory Domain Name"
+        Write-Host ""
 
         # Provide Subscription ID that will be used for deployment
-        [Parameter(Mandatory=$true)]
-        [string]
-        [ValidateNotNullOrEmpty()]
-        $subscriptionID,
+        Write-Host "Azure Subscription ID associated to the Global Administrator account for deploying this solution." -ForegroundColor Yellow
+        $subscriptionID = Read-Host "Azure Subscription ID"
+        Write-Host ""
 
         # This is used to create a unique website name in your organization. This could be your company name or business unit name
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $suffix,
+        Write-Host "Suffix for appending deployment assets with a tag used for identification (if blank, 'Blueprint' will be the default suffix used)." -ForegroundColor Yellow
+        $suffix = Read-Host "Deployment Suffix"
+        if ($suffix -eq "") {$suffix = "Blueprint"}
+        Write-Host ""
 
         # Provide Email address for SQL Threat Detection Alerts
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]        
-        $sqlTDAlertEmailAddress,
+        Write-Host "Email address for receiving SQL Threat Detection Alerts." -ForegroundColor Yellow
+        $sqlTDAlertEmailAddress = Read-Host "Email Address for SQL Threat Detection Alerts"
+        Write-Host ""
 
         # Provide CustomDomain that will be used for creating ASE SubDomain & WebApp HostName e.g. contoso.com. This is not a Mandatory parameter. You can also leave
-        #   it blank if you want to use built-in domain - azurewebsites.net. 
-        [string]
-        $customHostName = "azurewebsites.net",
-
+        #   it blank if you want to use built-in domain - azurewebsites.net.
+        Write-Host "Custom domain name for use with the deployment solution (if blank, the Azure built-in default domain name of 'azurewebsites.net' will be used)." -ForegroundColor Yellow
+        $customHostName = Read-Host "Custom Domain Name (Optional)"
+        if ($customHostName -eq "") {$customHostName = "azurewebsites.net"}
+        Write-Host ""
+        
+        
+        
+             
         # Provide certificate path if you are willing to provide your own frontend ssl certificate for Application gateway.
-        [ValidateScript({
-            if(
-                (Test-Path $_)
-            ){$true}
-            else {Throw "Parameter validtion failed due to invalid file path"}
-        })]  
-        [string]
-        $appGatewaySslCertPath,
+
+        $appGatewaySslCertPath
 
         # Enter password for the certificate provided.
-        [string]
-        $appGatewaySslCertPwd,
+
+        $appGatewaySslCertPwd
 
         # Use this swtich in combination with appGatewaySslCertPath parameter to setup frontend ssl on Application gateway.     
-        [switch]
-        $enableSSL,
+
+        $enableSSL
 
         # Use this switch to enable new password policy with 60 days expiry at Azure AD Domain level.
-        [switch]$enableADDomainPasswordPolicy               
-    )
+        $enableADDomainPasswordPolicy               
 
-Begin
-    {
+
+##########################################################################################################################################################################
+
+########################################################################################################################
+# LOGIN TO AZURE FUNCTION
+########################################################################################################################
+
+function loginToAzure {
+	Param(
+		[Parameter(Mandatory=$true)]
+		[int]$loginCount,
+        [Parameter(Mandatory=$true)]
+		[string]$subscriptionID
+	)
+
+    # Login to MSOnline Service
+    Write-Host -ForegroundColor Yellow  "`t* Connecting to MSOnline service."
+    Connect-MsolService | Out-Null
+
+    if (Get-MsolDomain) {
+        Write-Host -ForegroundColor Yellow "`t* Connection to MSOnline service established successfully."
+    }
+	
+    # Login to AzureRM Service
+    Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
+    Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
+
+    if (Get-AzureRmContext) {
+        Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
+    }
+
+    # Login Validation
+	if($?) {
+		Write-Host "`t*** Azure Login Successful!" -ForegroundColor Green
+	} 
+
+    else {
+		if ($loginCount -lt 3) {
+			$loginCount = $loginCount + 1
+			Write-Host "Invalid Credentials! Please try logging in again." -ForegroundColor Magenta
+			loginToAzure -lginCount $loginCount
+		} 
+        else {
+			Write-Host "Credentials input are incorrect, invalid, or exceed the maximum number of retries. Verify the Azure account information used is correct." -ForegroundColor Magenta
+			Write-Host "Press any key to exit..." -ForegroundColor Yellow
+			#$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+			Exit
+		}
+	}
+}
+
+
+##########################################################################################################################################################################
+    
         # Preference variable
         $ProgressPreference = 'SilentlyContinue'
         $ErrorActionPreference = 'Stop'
@@ -216,32 +239,14 @@ Begin
         $newPassword = New-RandomPassword
         $secNewPasswd = ConvertTo-SecureString $newPassword -AsPlainText -Force
 
-        <# Creating a Login credential.
-        $secpasswd = ConvertTo-SecureString $globalAdminPassword -AsPlainText -Force
-        $psCred = New-Object System.Management.Automation.PSCredential ($globalAdminUserName, $secpasswd)
-        #>
 	
         ########### Establishing connection to Azure ###########
-        try {
-            Write-Host -ForegroundColor Green "`nStep 2: Establishing connection to Azure AD,Subscription & Registering Resource Provider."
+       
+        loginToAzure -loginCount 1 -subscriptionID $subscriptionID
 
-            # Connecting to MSOL Service
-            Write-Host -ForegroundColor Yellow  "`t* Connecting to Msol service."
-            Connect-MsolService | Out-null
-            if(Get-MsolDomain){
-                Write-Host -ForegroundColor Yellow "`t* Connection to Msol Service established successfully."
-            }
-            
-            # Connecting to Azure Subscription
-            Write-Host -ForegroundColor Yellow "`t* Connecting to AzureRM Subscription - $subscriptionID."
-            Login-AzureRmAccount -SubscriptionId $subscriptionID | Out-null
-            if(Get-AzureRmContext){
-                Write-Host -ForegroundColor Yellow "`t* Connection to AzureRM Subscription established successfully."
-            }
-        }
-        catch {
-            Throw $_
-        }
+        ####################################################################################################
+
+
         $subId = ((Get-AzureRmContext).Subscription.Id).Replace('-', '').substring(0, 19)
         $context = Set-AzureRmContext -SubscriptionId $subscriptionId
         $userPrincipalName = $context.Account.Id
@@ -249,10 +254,9 @@ Begin
         $sqlBacpacUri = "http://$artifactsStorageAcc.blob.core.windows.net/$storageContainerName/artifacts/ContosoPayments.bacpac"
         $sqlsmodll = (Get-ChildItem "$env:programfiles\WindowsPowerShell\Modules\SqlServer" -Recurse -File -Filter "Microsoft.SqlServer.Smo.dll").FullName
 
-    }
     
-Process
-    {
+    
+
         try {
             # Register RPs
             $resourceProviders = @(
@@ -705,9 +709,9 @@ Process
         catch {
             throw $_
         }
-    }
-End
-    {
+
+
+
         Write-Host -ForegroundColor Green "`nCommon variables created for deployment"
 
         Write-Host -ForegroundColor Green "`n########################### Template Input Parameters - Start ###########################"
@@ -758,7 +762,7 @@ End
             $MergedtemplateoutputTable | ConvertTo-Json | Out-File -FilePath "$outputFolderPath\deploymentOutput.json"
             Write-Host "Output file has been generated - $outputFolderPath\deploymentOutput.json." -ForegroundColor Green
         }
-    }
+
 
 
 ####################  End of Script ###############################
