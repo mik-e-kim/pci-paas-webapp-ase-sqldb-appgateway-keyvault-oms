@@ -97,6 +97,16 @@
       "properties": {
         "name": "[parameters('aseName')]",
         "location": "[parameters('aseLocation')]",
+        "clusterSettings": [
+          {
+            "name": "DisableTls1.0",
+            "value": "1"
+          },
+          {
+            "name": "DisableTls1.1",
+            "value": "1"
+          }
+        ],
         "ipSslAddressCount": "[parameters('ipSslAddressCount')]",
         "internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]",
         "dnsSuffix": "[concat('ase.', parameters('customHostName'))]",
