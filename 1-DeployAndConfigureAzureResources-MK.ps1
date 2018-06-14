@@ -256,7 +256,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         $receptionistUserName = "receptionist_EdnaB@"+$azureADDomainName
         $pciAppServiceURL = "http://pcisolution"+(Get-Random -Maximum 999)+'.'+$azureADDomainName
         $suffix = $suffix.Replace(' ', '').Trim()
-        $displayName = ($suffix + " Azure PCI PAAS Sample")
+        $displayName = ($suffix + " Azure PCI PaaS Sample")
         $sslORnon_ssl = 'non-ssl'
         $automationaccname = "automationacc" + ((Get-Date).ToUniversalTime()).ToString('MMddHHmm')
         $automationADApplication = "AutomationAppl" + ((Get-Date).ToUniversalTime()).ToString('MMddHHmm')
@@ -317,12 +317,10 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
                 $StorageAccount = New-AzureRmStorageAccount -StorageAccountName $artifactsStorageAcc -Type 'Standard_LRS' -ResourceGroupName $storageResourceGroupName -Location "$location"
             }
             $StorageAccountContext = (Get-AzureRmStorageAccount | Where-Object{$_.StorageAccountName -eq $artifactsStorageAcc}).Context
-            
             $_artifactsLocation = $StorageAccountContext.BlobEndPoint + $storageContainerName
             
             # Copy files from the local storage staging location to the storage account container
             New-AzureStorageContainer -Name $storageContainerName -Context $StorageAccountContext -Permission Container -ErrorAction SilentlyContinue | Out-Null
-
             $ArtifactFilePaths = Get-ChildItem $pwd\nested -Recurse -File | ForEach-Object -Process {$_.FullName}
             foreach ($SourcePath in $ArtifactFilePaths) {
                 $BlobName = $SourcePath.Substring(($PWD.Path).Length + 1)
@@ -368,7 +366,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             $RoleAssignment = Get-AzureRmRoleAssignment -ObjectId $sqlADAdminObjectId -RoleDefinitionName Contributor -Scope ('/subscriptions/'+ $subscriptionID) -ErrorAction SilentlyContinue
             if ($RoleAssignment -eq $null){
                 Write-Host -ForegroundColor Yellow "`t* Assigning $($sqlADAdminDetails.SignInName) with Contributor role"
-                Write-Host -ForegroundColor Yellow "`t`t-> on Subscription - $subscriptionID"
+                Write-Host -ForegroundColor Yellow "`t`t-> On Subscription - $subscriptionID"
                 New-AzureRmRoleAssignment -ObjectId $sqlADAdminObjectId -RoleDefinitionName Contributor -Scope ('/subscriptions/' + $subscriptionID ) | Out-Null
                 if (Get-AzureRmRoleAssignment -ObjectId $sqlADAdminObjectId -RoleDefinitionName Contributor -Scope ('/subscriptions/'+ $subscriptionID))
                 {
@@ -399,24 +397,25 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             if ($tenantID -eq $null){$tenantID = (Get-AzureRmContext).Tenant.Id}
 
             # Create Active Directory Application
-            Write-Host ("`t* Step 4.1: Attempting to create an Azure AD application") -ForegroundColor Yellow
+            Write-Host ("`t* Step 4.1: Attempting to create an Azure AD application.") -ForegroundColor Yellow
             $azureAdApplication = New-AzureRmADApplication -DisplayName $displayName -HomePage $pciAppServiceURL -IdentifierUris $pciAppServiceURL -Password $secnewPasswd
             $azureAdApplicationClientId = $azureAdApplication.ApplicationId.Guid
             $azureAdApplicationObjectId = $azureAdApplication.ObjectId.Guid            
-            Write-Host ("`t`t* Azure Active Directory application creation successful. AppID is " + $azureAdApplication.ApplicationId) -ForegroundColor Yellow
+            Write-Host -ForegroundColor Yellow ("`t`t* Azure Active Directory application creation successful.") 
+            Write-Host -ForegroundColor Cyan ("`t`t`t-> AppID is " + $azureAdApplication.ApplicationId)
 
             # Create a service principal for the AD Application and add a Reader role to the principal 
-            Write-Host ("`t* Step 4.2: Attempting to create a Service Principal") -ForegroundColor Yellow
+            Write-Host -ForegroundColor Yellow ("`t* Step 4.2: Attempting to create a Service Principal.") 
             $principal = New-AzureRmADServicePrincipal -ApplicationId $azureAdApplication.ApplicationId
             Start-Sleep -s 30 # Wait till the ServicePrincipal is completely created. Usually takes 20+secs. Needed as Role assignment needs a fully deployed servicePrincipal
-            Write-Host ("`t`t* Service Principal creation successful - " + $principal.DisplayName) -ForegroundColor Yellow
+            Write-Host -ForegroundColor Cyan ("`t`t* Service Principal creation successful - " + $principal.DisplayName)
             Start-Sleep -Seconds 30
 
             # Assign Reader Role to Service Principal on Azure Subscription
             $scopedSubs = ("/subscriptions/" + $subscriptionID)
             Write-Host ("`t* Step 4.3: Attempting Reader role assignment." ) -ForegroundColor Yellow
             New-AzureRmRoleAssignment -RoleDefinitionName Reader -ServicePrincipalName $azureAdApplication.ApplicationId.Guid -Scope $scopedSubs | Out-Null
-            Write-Host ("`t`t* Reader role assignment successful." ) -ForegroundColor Yellow    
+            Write-Host -ForegroundColor Cyan  ("`t`t* Reader role assignment successful." )    
         }
         catch {
             throw $_
@@ -473,7 +472,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             # Submitting templte deployment to new powershell session
             Write-Host -ForegroundColor Yellow "`t* Submitting deployment"
             Start-Process Powershell -ArgumentList "-NoExit", ".\1-click-deployment-nested\Initiate-TemplateDeployment.ps1 -subscriptionID $subscriptionID -deploymentName $deploymentName -resourceGroupName $resourceGroupName -location $location -templateFile '$scriptFolder\azuredeploy.json' -_artifactsLocation $_artifactsLocation -_artifactsLocationSasToken $_artifactsLocationSasToken -sslORnon_ssl $sslORnon_ssl -certData $certData -certPassword $certPassword -aseCertData $aseCertData -asePfxBlobString $asePfxBlobString -asePfxPassword $asePfxPassword -aseCertThumbprint $aseCertThumbprint -bastionHostAdministratorPassword $newPassword -sqlAdministratorLoginPassword $newPassword -sqlThreatDetectionAlertEmailAddress $SqlTDAlertEmailAddress -automationAccountName $automationaccname -customHostName $customHostName -azureAdApplicationClientId $azureAdApplicationClientId -azureAdApplicationClientSecret $newPassword -azureAdApplicationObjectId $azureAdApplicationObjectId -sqlAdAdminUserName $sqlAdAdminUserName -sqlAdAdminUserPassword $newPassword"
-            Write-Host "`t`t-> Waiting for deployment $deploymentName to submit... " -ForegroundColor Yellow
+            Write-Host "`t`t-> Waiting for deployment '$deploymentName' to submit... " -ForegroundColor Yellow
             $count=0
             $status=1
             do
@@ -491,7 +490,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             }
             until ((Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Name $deploymentName -ErrorAction SilentlyContinue ) -ne $null)             
             if($status){
-                Write-Host -ForegroundColor Yellow "`t* Deployment has been submitted successfully."
+                Write-Host -ForegroundColor Yellow "`t* '$deploymentName' has been submitted successfully."
             }            
             else{
                 Write-Host -ForegroundColor Magenta "The deployment failed to submit. Please review all input parameters and attempt to redeploy the solution."
@@ -505,10 +504,10 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
 
         # Loop to check SQL server deployment.
         try {
-            Write-Host "`t`t-> Waiting for the 'deploy-SQLServerSQLDb' deployment to submit.. " -ForegroundColor Yellow            
+            Write-Host "`t`t-> Waiting for deployment 'deploy-SQLServerSQLDb' to submit.. " -ForegroundColor Yellow            
             do
             {
-                Write-Host "`t`t-> Checking the deployment in 60 secs..." -ForegroundColor Yellow
+                Write-Host "`t`t-> Checking deployment in 60 secs..." -ForegroundColor Yellow
                 Start-sleep -seconds 60
             }
             until ((Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Name 'deploy-SQLServerSQLDb' -ErrorAction SilentlyContinue) -ne $null) 
@@ -541,7 +540,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             $allResource = (Get-AzureRmResource | ? ResourceGroupName -EQ $resourceGroupName)
             $sqlServerName =  ($allResource | ? ResourceType -eq 'Microsoft.Sql/servers').ResourceName
             Write-Host -ForegroundColor Yellow ("`t* Updating the SQL firewall with your client IP address.")
-            Write-Host -ForegroundColor Green "`t -> Your client IP address is $clientIPAddress."
+            Write-Host -ForegroundColor Cyan "`t`t-> Your client IP address is $clientIPAddress."
             $unqiueid = ((Get-Date).ToUniversalTime()).ToString('MMddHHmm')
             New-AzureRmSqlServerFirewallRule -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -FirewallRuleName "ClientIpRule$unqiueid" -StartIpAddress $clientIPAddress -EndIpAddress $clientIPAddress | Out-Null
         }
@@ -584,20 +583,21 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Write-Host ("`n Step 11: Encrypt the SQL DB credit card information column" ) -ForegroundColor Green
             # Connect to your database.
             Add-Type -Path $sqlsmodll
-            Write-Host -ForegroundColor Yellow "`t* Connecting database - $databaseName on $sqlServerName"
+            Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName"
             $connStr = "Server=tcp:" + $sqlServerName + ".database.windows.net,1433;Initial Catalog=" + "`"" + $databaseName + "`"" + ";Persist Security Info=False;User ID=" + "`"" + "sqladmin" + "`"" + ";Password=`"" + "$newPassword" + "`"" + ";MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
             $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
             $connection.ConnectionString = $connStr
             $connection.Connect()
             $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
             $database = $server.Databases[$databaseName]
+            Write-Host -ForegroundColor Cyan "`t`t* Connected to database - $databaseName on $sqlServerName"
 
             # Granting Users & ServicePrincipal full access on Keyvault
-            Write-Host ("`t* Granting Key Vault access permissions to users and service principals.") -ForegroundColor Yellow
+            Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
             Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all  -PermissionsToSecrets all
             Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $SqlAdAdminUserName -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all 
             Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $azureAdApplicationClientId -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all
-            Write-Host ("`t* Granted permissions to users and serviceprincipals.") -ForegroundColor Yellow
+            Write-Host -ForegroundColor Cyan ("`t`t* Granted permissions to users and serviceprincipals.") 
 
             # Creating KeyVault Key to encrypt DB
             Write-Host -ForegroundColor Yellow "`t* Creating a new Key Vault key."
@@ -621,7 +621,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Add-SqlAzureAuthenticationContext -ClientID $azureAdApplicationClientId -Secret $newPassword -Tenant $tenantID
             try {
                 New-SqlColumnEncryptionKey -Name $cekName -InputObject $database -ColumnMasterKey $cmkName | Out-Null
-                Write-Host ("`t* Creating a new SQL Column Encryption Key") -ForegroundColor Yellow
+                Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Encryption Key") 
             }
             catch {
                 Write-Host -ForegroundColor Magenta "Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
