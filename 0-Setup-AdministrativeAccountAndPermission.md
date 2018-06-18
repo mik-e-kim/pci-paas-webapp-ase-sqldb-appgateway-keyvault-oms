@@ -17,7 +17,7 @@ This PowerShell script is used to verify pre-deployment requirements for the Pay
 - Enable-AzureRMDiagnostics (Script)
 
 This script will attempt to install the following versions of these PowerShell modules:
-- AzureRM - 5.1.1
+- AzureRM - 5.7.0
 - AzureAD - 2.0.0.131
 - MSOnline - 1.1.166.0
 - AzureDiagnosticsAndLogAnalytics - 0.1
