@@ -127,7 +127,7 @@ Process
     try{
           ### Install required powershell modules
             $requiredModules=@{
-                'AzureRM' = '5.1.1';
+                'AzureRM' = '5.7.0';
                 'AzureAD' = '2.0.0.131';
                 'SqlServer' = '21.0.17262';
                 'MSOnline' = '1.1.166.0';

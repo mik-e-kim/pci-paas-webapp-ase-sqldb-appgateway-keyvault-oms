@@ -79,7 +79,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2017-03-01",
+      "apiVersion": "2017-06-01",
       "name": "[variables('applicationGatewayName')]",
       "type": "Microsoft.Network/applicationGateways",
       "location": "[resourceGroup().location]",
@@ -208,9 +208,16 @@
           }
         ],
         "sslPolicy": {
+          "policyType": "Custom",
+          "minProtocolVersion": "TLSv1_2",
           "disabledSslProtocols": [
             "TLSv1_0",
             "TLSv1_1"
+          ],
+          "cipherSuites": [
+            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+            "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+            "TLS_RSA_WITH_AES_128_GCM_SHA256"
           ]
         },
         "webApplicationFirewallConfiguration": {
