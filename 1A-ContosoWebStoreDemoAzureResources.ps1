@@ -497,7 +497,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
                 $OptionalParameters["sqlAdAdminUserPassword"] = "$newPassword"  # Auto-generated
 
             # Deploy to Azure    
-            New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -Mode Incremental -TemplateParameterObject $OptionalParameters -TemplateFile "$scriptFolder\azuredeploy.json" -DeploymentDebugLogLevel All -Force -AsJob | Out-Null
+            New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -Mode Incremental -TemplateParameterObject $OptionalParameters -TemplateFile "$scriptFolder\azuredeploydemo.json" -DeploymentDebugLogLevel All -Force -AsJob | Out-Null
 
             # Deployment Status Update
             Write-Host "`t`t-> Waiting for deployment '$deploymentName' to submit... " -ForegroundColor Yellow
