@@ -66,9 +66,9 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
     Write-Host -ForegroundColor Yellow " to the Global Administrator account for deploying this solution."
     do {
         $azureADDomainName = Read-Host " Azure Active Directory Domain Name"
-        if ($azureADDomainName -match "") {Write-Host -ForegroundColor Magenta "`t-> Please enter an Azure Active Directory Domain Name."}
+        if ($azureADDomainName -notmatch ".onmicrosoft.com") {Write-Host -ForegroundColor Magenta "`t-> Please enter an Azure Active Directory Domain Name."}
     }
-    until ($azureADDomainName -notmatch "")
+    until ($azureADDomainName -match ".onmicrosoft.com")
     Write-Host ""
 
     # Provide Subscription ID that will be used for deployment
