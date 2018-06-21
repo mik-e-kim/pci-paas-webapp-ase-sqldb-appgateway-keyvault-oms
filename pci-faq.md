@@ -19,7 +19,6 @@
 ### Why do I need an SSL certificate?
 > The installation requires a custom domain and SSL certificate to meet PCI DSS requirements and protect the client-side traffic from snooping. Microsoft recommends that a custom domain be purchased with [an SSL package](https://d.docs.live.net/7b2b5032e10686e1/Azure%20Compliance/PCI%20DSS%20quickstart/1.%09https:/docs.microsoft.com/en-us/azure/app-service-web/web-sites-purchase-ssl-web-site). Microsoft offers the ability to create a domain and request an SSL certificate from a Microsoft partner.
 
-
 ### How do I set up the administrator properly to use this solution?
 > Review the 'Configure your global admin for the solution' section of the installation guide.
 
@@ -30,7 +29,7 @@
 > Currently this solution requires that you deploy in US EAST. Limitations of service availability in all regions may prevent the solution from deploying storage accounts, or the AES. This solution was tested with the following resource group command: `New-AzureRmResourceGroup -Name [RESOURCE GROUP NAME] -Location "East US"`
 
 ### The deployment of my services takes over two hours. Is this normal?
-> The total time for deployment of the services is approximately 1.5 hours from the time **Purchase** is clicked on the ARM template. ASE takes 2 hours to provision. For more information, see: [How to deploy ASE](http://www.bizbert.com/bizbert/2016/01/07/AppServiceEnvironmentsHowToDeployAPIAppsToAVirtualNetwork.aspx)
+> The total time for deployment of the services is approximately 1.5 hours from the time **Purchase** is clicked on the ARM template. ASE takes 2 hours to provision. For more information, see: [How to deploy ASE](http://www.bizbert.com/bizbert/2016/01/07/AppServiceEnvironmentsHowToDeployAPIAppsToAVirtualNetwork.aspx). ASE may time out in the deployment, if running for 3+ hours, in which it is recommended users cancel the deployment, clean-up deployed assets, and attempt to redeploy the solution.  
 
 ### How do I use this solution in my production deployment environment?
 > This solution (including the scripts, template, and documentation) is designed to help you build a pilot or demo site. Using this solution does not provide a ready-to-production solution for customers; it only illustrates the components required to build a secure and compliant end-to-end solution. For example, custom host names, SSL certificates, virtual network address spacing, NSG routing, existing Storage and databases, existing enterprise-wide OMS workspaces and solutions, Azure Key Vault rotation policies, usage of existing AD admins and RBAC roles, and usage of existing AD applications and service principals will require customization to meet the requirements of your custom solution in production.
