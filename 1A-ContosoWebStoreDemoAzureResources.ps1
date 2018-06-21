@@ -552,7 +552,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         }
         until ((Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Name 'deploy-SQLServerSQLDb' -ErrorAction SilentlyContinue) -ne $null) 
 
-        Write-Host -ForegroundColor Yellow "`t* Deployment 'deploy-SQLServerSQLDb' has been submitted."
+        Write-Host -ForegroundColor Cyan "`t* Deployment 'deploy-SQLServerSQLDb' has been submitted successfully."
 
         do {
             Write-Host -ForegroundColor Yellow "`t`t-> Deployment 'deploy-SQLServerSQLDb' is currently running. Checking deployment in 60 seconds..."

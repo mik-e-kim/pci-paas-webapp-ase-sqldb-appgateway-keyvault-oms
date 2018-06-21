@@ -359,7 +359,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     $context = Set-AzureRmContext -SubscriptionId $subscriptionId
     $userPrincipalName = $context.Account.Id
     $artifactsStorageAcc = "stage$subId" 
-    $sqlBacpacUri = "http://$artifactsStorageAcc.blob.core.windows.net/$storageContainerName/artifacts/PaymentProcessing.bacpac"
+    $sqlBacpacUri = "http://$artifactsStorageAcc.blob.core.windows.net/$storageContainerName/artifacts/ContosoPayments.bacpac"
     $sqlsmodll = (Get-ChildItem "$env:programfiles\WindowsPowerShell\Modules\SqlServer" -Recurse -File -Filter "Microsoft.SqlServer.Smo.dll").FullName
 
     try {
@@ -634,7 +634,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         }
         until ((Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Name 'deploy-SQLServerSQLDb' -ErrorAction SilentlyContinue) -ne $null) 
 
-        Write-Host -ForegroundColor Yellow "`t* Deployment 'deploy-SQLServerSQLDb' has been submitted."
+        Write-Host -ForegroundColor Cyan "`t* Deployment 'deploy-SQLServerSQLDb' has been submitted successfully."
 
         do {
             Write-Host -ForegroundColor Yellow "`t`t-> Deployment 'deploy-SQLServerSQLDb' is currently running. Checking deployment in 60 seconds..."
@@ -671,31 +671,10 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Write-Host -ForegroundColor Magenta "`t-> Could not update SQL server firewall rules. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
         Break
     }
-
-    # Import SQL bacpac and update Azure SQL DB Data masking policy
-    Write-Host -ForegroundColor Green "`n Step 9: Importing the example SQL bacpac and updating the Azure SQL DB Data Masking policy"
-    try {
-        # Getting Keyvault reource object
-        Write-Host -ForegroundColor Yellow "`t* Getting the Key Vault resource object."
-        $keyVaultName = ($allResource | ? ResourceType -eq 'Microsoft.KeyVault/vaults').ResourceName
-        # Importing bacpac file
-        Write-Host -ForegroundColor Yellow ("`t* Importing the SQL backpac from the artifacts storage account." ) 
-        New-AzureRmSqlDatabaseImport -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -DatabaseName $databaseName -StorageKeytype $artifactsStorageAccKeyType -StorageKey $artifactsStorageAccKey -StorageUri $sqlBacpacUri -AdministratorLogin 'sqladmin' -AdministratorLoginPassword $secNewPasswd -Edition Standard -ServiceObjectiveName S0 -DatabaseMaxSizeBytes 50000 | Out-Null
-        Start-Sleep -s 100
-        Write-Host -ForegroundColor Yellow ("`t* Updating Azure SQL DB Data Masking policy on the FirstName & LastName columns." )
-        Set-AzureRmSqlDatabaseDataMaskingPolicy -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -DatabaseName $databaseName -DataMaskingState Enabled
-        Start-Sleep -s 30
-        New-AzureRmSqlDatabaseDataMaskingRule -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -DatabaseName $databaseName -SchemaName "dbo" -TableName "Customers" -ColumnName "FirstName" -MaskingFunction Default
-        New-AzureRmSqlDatabaseDataMaskingRule -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -DatabaseName $databaseName -SchemaName "dbo" -TableName "Customers" -ColumnName "LastName" -MaskingFunction Default
-    }
-    catch {
-        Write-Host -ForegroundColor Magenta "`t-> Could not import the SQL bacpac and update the Azure SQL DB Data Masking policy. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
-        Break
-    }
     
     # Add an Azure Active Directory administrator for SQL
     try {
-        Write-Host -ForegroundColor Green ("`n Step 10: Updating access to SQL Server for the Azure Active Directory administrator account")
+        Write-Host -ForegroundColor Green ("`n Step 9: Updating access to SQL Server for the Azure Active Directory administrator account")
         Write-Host -ForegroundColor Yellow ("`t* Granting SQL Server Active Directory Administrator access to $SqlAdAdminUserName.") 
         Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $SQLServerName -DisplayName $SqlAdAdminUserName | Out-Null
     }
@@ -704,75 +683,9 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Break
     }
 
-    # Encrypting Credit card information within database
-    try {
-        Write-Host -ForegroundColor Green ("`n Step 11: Encrypt the SQL DB credit card information column" )
-        # Connect to your database.
-        Add-Type -Path $sqlsmodll
-        Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName"
-        $connStr = "Server=tcp:" + $sqlServerName + ".database.windows.net,1433;Initial Catalog=" + "`"" + $databaseName + "`"" + ";Persist Security Info=False;User ID=" + "`"" + "sqladmin" + "`"" + ";Password=`"" + "$newPassword" + "`"" + ";MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-        $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
-        $connection.ConnectionString = $connStr
-        $connection.Connect()
-        $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
-        $database = $server.Databases[$databaseName]
-        Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName"
-
-        # Granting Users & ServicePrincipal full access on Keyvault
-        Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
-        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all  -PermissionsToSecrets all
-        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $SqlAdAdminUserName -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all 
-        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $azureAdApplicationClientId -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all
-        Write-Host -ForegroundColor Cyan ("`t`t-> Granted permissions to users and serviceprincipals.") 
-
-        # Creating KeyVault Key to encrypt DB
-        Write-Host -ForegroundColor Yellow "`t* Creating a new Key Vault key."
-        $key = (Add-AzureKeyVaultKey -VaultName $KeyVaultName -Name $keyName -Destination 'Software').ID
-
-        # Switching SQL commands context to the AD Application
-        Write-Host -ForegroundColor Yellow "`t* Creating a SQL Column Master Key & a SQL Column Encryption Key."
-        $cmkSettings = New-SqlAzureKeyVaultColumnMasterKeySettings -KeyURL $key
-        $sqlMasterKey = Get-SqlColumnMasterKey -Name $cmkName -InputObject $database -ErrorAction SilentlyContinue
-        if ($sqlMasterKey){Write-Host -ForegroundColor Yellow "`t* SQL Master Key $cmkName already exists."} 
-        else {
-            try {
-                New-SqlColumnMasterKey -Name $cmkName -InputObject $database -ColumnMasterKeySettings $cmkSettings | Out-Null
-                Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Master Key")
-            }
-            catch {
-                Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-                break
-            }
-        }
-        Add-SqlAzureAuthenticationContext -ClientID $azureAdApplicationClientId -Secret $newPassword -Tenant $tenantID
-        try {
-            New-SqlColumnEncryptionKey -Name $cekName -InputObject $database -ColumnMasterKey $cmkName | Out-Null
-            Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Encryption Key") 
-        }
-        catch {
-            Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-            break
-        }
-
-        Write-Host -ForegroundColor Cyan "`t* SQL encryption has been successfully created. Encrypting SQL columns."
-
-        # Encrypt the selected columns (or re-encrypt, if they are already encrypted using keys/encrypt types, different than the specified keys/types.
-        $ces = @()
-        $ces += New-SqlColumnEncryptionSettings -ColumnName "dbo.Customers.CreditCard_Number" -EncryptionType "Deterministic" -EncryptionKey $cekName
-        $ces += New-SqlColumnEncryptionSettings -ColumnName "dbo.Customers.CreditCard_Code" -EncryptionType "Deterministic" -EncryptionKey $cekName
-        $ces += New-SqlColumnEncryptionSettings -ColumnName "dbo.Customers.CreditCard_Expiration" -EncryptionType "Deterministic" -EncryptionKey $cekName
-        Set-SqlColumnEncryption -InputObject $database -ColumnEncryptionSettings $ces
-        Write-Host -ForegroundColor Cyan "`t`t-> Column CreditCard_Number, CreditCard_Code, CreditCard_Expiration have been successfully encrypted."            
-    }
-    catch {
-        Write-Host -ForegroundColor Magenta "`t Column encryption has failed."
-        Write-Host -ForegroundColor Magenta "`t-> Could not successfully encrypt SQL columns. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-        Break
-    }
-
     # Enabling the Azure Security Center Policies.
     try {
-        Write-Host -ForegroundColor Green ("`n Step 12: Enabling policies for Azure Security Center" )
+        Write-Host -ForegroundColor Green ("`n Step 10: Enabling policies for Azure Security Center" )
         Write-Host "" 
         
         $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
