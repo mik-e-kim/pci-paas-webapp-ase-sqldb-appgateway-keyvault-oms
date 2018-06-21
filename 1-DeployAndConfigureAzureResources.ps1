@@ -32,7 +32,7 @@ Write-Host -ForegroundColor Green "##########################       Infrastructu
 Write-Host -ForegroundColor Green "################################################################################################## `n "
 
 Write-Host -ForegroundColor Yellow " This script can be used for creating the necessary infrastructure to deploy the initial Azure resources for a" 
-Write-Host -ForegroundColor Yellow " payment processing solutionfor the collection of basic user information and payment data. `n " 
+Write-Host -ForegroundColor Yellow " payment processing solutionfor the collection of basic user information and payment data." 
 Write-Host -ForegroundColor Yellow "`n See https://aka.ms/pciblueprintprocessingoverview for more information. `n "
 Write-Host -ForegroundColor Yellow " This script can only be deployed from an Azure Active Directory Global Administrator account. `n " 
 Write-Host -ForegroundColor Magenta " If an Azure Active Directory Global Administrator Account is unavailable, run" 
@@ -55,13 +55,15 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
 ###############################################################################################################################################################
 
     # Provide resourceGroupName for deployment
-    Write-Host -ForegroundColor Yellow " Name of the resource group to be created for this deployment (if blank, 'PCI-PayProc-BP' will be used as the resource group name)."
+    Write-Host -ForegroundColor Yellow " Name of the resource group to be created for this deployment" 
+    Write-Host -ForegroundColor Yellow " (if blank, 'PCI-PayProc-BP' will be used as the resource group name)."
     $resourceGroupName = Read-Host " Resource Group Name"
     if ($resourceGroupName -eq "") {$resourceGroupName = "PCI-PayProc-BP"}
     Write-Host ""
 
     # Provide Azure AD Domain Name.
-    Write-Host -ForegroundColor Yellow " Name of the Azure Active Directory (AAD) domain associated to the Global Administrator account for deploying this solution."
+    Write-Host -ForegroundColor Yellow " Name of the Azure Active Directory (AAD) domain associated" 
+    Write-Host -ForegroundColor Yellow " to the Global Administrator account for deploying this solution."
     do {
         $azureADDomainName = Read-Host " Azure Active Directory Domain Name"
         if ($azureADDomainName -match "") {Write-Host -ForegroundColor Magenta "`t-> Please enter an Azure Active Directory Domain Name."}
@@ -70,7 +72,8 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
     Write-Host ""
 
     # Provide Subscription ID that will be used for deployment
-    Write-Host -ForegroundColor Yellow " Azure Subscription ID associated to the Global Administrator account for deploying this solution." 
+    Write-Host -ForegroundColor Yellow " Azure Subscription ID associated to the Global Administrator account"
+    Write-Host -ForegroundColor Yellow " for deploying this solution." 
     do {
         try {
             [System.Guid]$subscriptionID = Read-Host " Azure Subscription ID"
@@ -85,7 +88,8 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
     Write-Host ""
 
     # This is used to create a unique website name in your organization. This could be your company name or business unit name
-    Write-Host -ForegroundColor Yellow " Suffix for appending deployment assets with a tag used for identification (if blank, 'Blueprint' will be the default suffix used)."
+    Write-Host -ForegroundColor Yellow " Suffix for appending deployment assets with a tag used for identification" 
+    Write-Host -ForegroundColor Yellow " (if blank, 'Blueprint' will be the default suffix used)."
     $suffix = Read-Host " Deployment Suffix"
     if ($suffix -eq "") {$suffix = "Blueprint"}
     Write-Host ""
@@ -107,7 +111,8 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
 
     # Provide CustomDomain that will be used for creating ASE SubDomain & WebApp HostName e.g. contoso.com. This is not a Mandatory parameter. You can also leave
     #   it blank if you want to use the built-in domain - azurewebsites.net.
-    Write-Host -ForegroundColor Yellow " Custom domain name for use with the deployment solution (if blank, the Azure built-in default domain name of 'azurewebsites.net' will be used)."
+    Write-Host -ForegroundColor Yellow " Custom domain name for use with the deployment solution"
+    Write-Host -ForegroundColor Yellow " (if blank, the Azure built-in default domain name of 'azurewebsites.net' will be used)."
     $customHostName = Read-Host " Custom Domain Name (Optional)"
     if ($customHostName -eq "") {
         $customHostName = "azurewebsites.net"
