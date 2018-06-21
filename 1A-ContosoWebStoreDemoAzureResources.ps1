@@ -323,10 +323,10 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     
     try {
         # Create a storage account name if none was provided
-        $StorageAccount = (Get-AzureRmStorageAccount | Where-Object {$_.StorageAccountName -eq $artifactsStorageAcc})
+        $StorageAccount = (Get-AzureRmStorageAccount | Where-Object{$_.StorageAccountName -eq $artifactsStorageAcc})
 
         # Create the storage account if it doesn't already exist
-        if ($StorageAccount -eq $null) {
+        if($StorageAccount -eq $null){
             Write-Host -ForegroundColor Yellow "`t* Creating an Artifacts Resource group & an associated Storage account."
             New-AzureRmResourceGroup -Location "$location" -Name $storageResourceGroupName -Force | Out-Null
             $StorageAccount = New-AzureRmStorageAccount -StorageAccountName $artifactsStorageAcc -Type 'Standard_LRS' -ResourceGroupName $storageResourceGroupName -Location "$location"
@@ -349,7 +349,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
 
         # Retrieve Access Key 
         $artifactsStorageAccKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $storageAccount.ResourceGroupName -name $storageAccount.StorageAccountName -ErrorAction Stop)[0].value 
-        
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create an artifacts storage account for storing configuration resources. Remove any previously created assets before attempting to run the script again."
@@ -624,7 +623,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
 
     # Encrypting Credit card information within database
     try {
-        Write-Host -ForegroundColor Green ("`n Step 11: Encrypt the SQL DB credit card information column" )
+        Write-Host ("`n Step 11: Encrypt the SQL DB credit card information column" ) -ForegroundColor Green
         # Connect to your database.
         Add-Type -Path $sqlsmodll
         Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName"
@@ -655,10 +654,10 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         else {
             try {
                 New-SqlColumnMasterKey -Name $cmkName -InputObject $database -ColumnMasterKeySettings $cmkSettings | Out-Null
-                Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Master Key")
+                Write-Host ("`t* Creating a new SQL Column Master Key") -ForegroundColor Yellow
             }
             catch {
-                Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
+                Write-Host -ForegroundColor Magenta "Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
                 break
             }
         }
@@ -668,7 +667,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Encryption Key") 
         }
         catch {
-            Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
+            Write-Host -ForegroundColor Magenta "Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
             break
         }
 
