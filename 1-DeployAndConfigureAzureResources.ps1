@@ -72,8 +72,7 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
     Write-Host ""
 
     # Provide Subscription ID that will be used for deployment
-    Write-Host -ForegroundColor Yellow " Azure Subscription ID associated to the Global Administrator account"
-    Write-Host -ForegroundColor Yellow " for deploying this solution." 
+    Write-Host -ForegroundColor Yellow " Azure Subscription ID associated to the Global Administrator account for deploying this solution." 
     do {
         try {
             [System.Guid]$subscriptionID = Read-Host " Azure Subscription ID"
@@ -116,7 +115,7 @@ Write-Host -ForegroundColor Yellow "`t* Custom Domain Name and Custom SSL Certif
     $customHostName = Read-Host " Custom Domain Name (Optional)"
     if ($customHostName -eq "") {
         $customHostName = "azurewebsites.net"
-        Write-Host -ForegroundColor Yellow " A custom domain name was not provided. The Azure default 'azurewebsites.net' will be used."
+        Write-Host -ForegroundColor Cyan " A custom domain name was not provided. The Azure default 'azurewebsites.net' will be used."
     }
     Write-Host ""
     
@@ -268,11 +267,9 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     ########### Manage directories ###########
 
     # Create folder to store self-signed certificates
-    if ($enableSSL -eq $true) {
-        Write-Host -ForegroundColor Yellow "`t* Creating a certificates directory for storing the self-signed certificate."
-        if(!(Test-path $pwd\certificates)){mkdir $pwd\certificates -Force | Out-Null }
-    }
-
+    Write-Host -ForegroundColor Yellow "`t* Creating a certificates directory for storing the self-signed certificate."
+    if(!(Test-path $pwd\certificates)){mkdir $pwd\certificates -Force | Out-Null }
+    
     ### Create Output  folder to store logs, deploymentoutputs etc.
     if(! (Test-Path -Path "$(Split-Path $MyInvocation.MyCommand.Path)\output")) {
         New-Item -Path $(Split-Path $MyInvocation.MyCommand.Path) -Name 'output' -ItemType Directory
@@ -318,10 +315,8 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
 
     #  Function for self-signed certificate generator. Reference link - https://gallery.technet.microsoft.com/scriptcenter/Self-signed-certificate-5920a7c6
-    if ($enableSSL -eq $true) {
-        .".\1-click-deployment-nested\New-SelfSignedCertificateEx.ps1"
-    }
-
+    .".\1-click-deployment-nested\New-SelfSignedCertificateEx.ps1"
+    
     Write-Host -ForegroundColor Yellow "`t* Functions loaded successfully."
 
     ########### Manage Variables ###########
@@ -691,7 +686,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     # Enabling the Azure Security Center Policies.
     try {
         Write-Host -ForegroundColor Green ("`n Step 10: Enabling policies for Azure Security Center" )
-        Write-Host "" 
         
         $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
         Write-Host -ForegroundColor Yellow "`t* Checking AzureRM Context."
