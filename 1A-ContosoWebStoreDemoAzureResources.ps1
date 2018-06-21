@@ -534,7 +534,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Write-Host -ForegroundColor Cyan "`t* Deployment '$deploymentName' has been submitted successfully."
         }            
         else {
-            Write-Host -ForegroundColor Magenta "The deployment failed to submit. Review all input parameters and attempt to redeploy the solution."
+            Write-Host -ForegroundColor Magenta "`t-> The deployment failed to submit. Review all input parameters and attempt to redeploy the solution."
         }
     }
     catch {
@@ -682,7 +682,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Write-Host -ForegroundColor Cyan "`t`t-> Column CreditCard_Number, CreditCard_Code, CreditCard_Expiration have been successfully encrypted."            
     }
     catch {
-        Write-Host -ForegroundColor Magenta "`t Column encryption has failed."
+        Write-Host -ForegroundColor Magenta "`t-> Column encryption has failed."
         Write-Host -ForegroundColor Magenta "`t-> Could not successfully encrypt SQL columns. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
         Break
     }
