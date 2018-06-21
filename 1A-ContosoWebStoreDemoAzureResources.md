@@ -13,9 +13,6 @@ This PowerShell script is used to deploy the infrastructure for the Contoso Web 
 
 ```PowerShell
 .\1A-ContosoWebStoreDemoAzureResources.ps1
-    -subscriptionID <String>
-    -sqlTDAlertEmailAddress <String>
-
 ```
 ### Deployment Timeline
 
@@ -25,27 +22,22 @@ The estimated time to deploy the solution components is shown in the diagram bel
     
 ```powershell
 .\1A-ContosoWebStoreDemoAzureResources.ps1 
-    -resourceGroupName Contoso-PCIBP
-    -azureADDomainName  
-    -subscriptionID XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
-    -suffix PCIwebstore
-    -sqlTDAlertEmailAddress support@webstore.com 
-    -enableSSL 
 ```
 
-This deployment script creates the required Azure accounts and generates a self-signed certificate for the ASE ILB and Application Gateway SSL endpoint using a provided custom domain.
+This deployment script creates the required Azure Active Directory (AAD) accounts and generates a self-signed certificate for the ASE ILB and Application Gateway SSL endpoint using a provided custom domain.
+Users will be prompted for two logins, one for Azure Active Directory (AAD) and another for Azure Resource Manager (ARM). The only required inputs are guided prompts for providing an email address for SQL Threat Detection alerts and an Azure Subscription ID. 
 
 ## Initiating the Deployment
 
-An Azure Active Directory (AAD) Global Administrator account will be required for initiating this deployment. This user must be a *Global Administrator* that has been granted full control of the default Azure Active Directory instance. The user must be in the `Azure Active Directory` domain namespace.
+An Azure Active Directory (AAD) Global Administrator account will be required for initiating this deployment. This user must be a *Global Administrator* that has been granted full control of the default Azure Active Directory instance. The user must be in the Azure Active Directory domain namespace.
 
-In deploying this solution, two login prompts will be presented such that users' AAD Global Administrator account credentials are not captured and presented in the PowerShell console. 
+In deploying this solution, two login prompts will be presented such that users' AAD Global Administrator account credentials are not captured and presented in the open PowerShell session. 
 
-As the deployment utilizes both the *AzureRM* and *MSOnline* PowerShell modules for monitoring and configuring the deployment, there are two login prompts (two sets for each MSOnline and AzureRM pair). 
+As the deployment utilizes both the *AzureRM* and *MSOnline* PowerShell modules for monitoring and configuring the deployment, there are two login prompts users will be required to provide credentials for. 
 
 Azure Active Directory Global Admininistrator credentials will not be presented in the PowerShell console, and is securely authenticated through web portal logins. 
 
-Role-based access control requires that an administrator grants themselves administrative rights in AAD. Refer to this blog for a detailed explanation.
+Role-based access control (RBAC) requires that an administrator grants themselves administrative rights in AAD. Refer to this blog for a detailed explanation.
 > [Delegating Admin Rights in Microsoft Azure](https://www.petri.com/delegating-admin-rights-in-microsoft-azure)
 > [PowerShell - Connecting to Azure Active Directory using Microsoft Account](http://stackoverflow.com/questions/29485364/powershell-connecting-to-azure-active-directory-using-microsoft-account) user.
 
@@ -53,45 +45,31 @@ For more information, see [Script Details: 0-Setup-AdministrativeAccountAndPermi
 
 ## Required Parameters
 
-> -resourceGroupName <String>
+> Email Address for SQL Threat Detection Alerts
 
-Specifies the Resource Group name into which all resources will be deployed.
+Provide a valid email address for SQL Threat Detection alerts and issues associated with your deployment.
 
-> -suffix <String> = Blueprint
+> Azure Subscription ID
 
-Used as an identifier in the deployment of the solution. This can be any character or identifier, such as a business unit name.
+Specifies the ID of a subscription. This needs to be provided for validating the Azure Active Directory (AAD) global administrator account that will be used with the deployment. 
 
-> -sqlTDAlertEmailAddress <String>
+## Default Parameters
 
-Provide a valid email address for alerts and issues associated with your deployment.
+> Resource group
 
-> -subscriptionId <String>
+The default of `ContosoPCI-BP` will be the name of the resource group where the solution will be deployed.
 
-Specifies the ID of a subscription. If you do not specify this parameter, the account is authenticated with the home tenant.
+> Suffix
 
-> -enableSSL <Boolean>
+`Blueprint` will be used as an identifier in the deployment of the solution. In a production environment, this can be any character or identifier, such as a business unit name.
 
-Indicates whether to enable SSL on the Application Gateway, allowing the user to browse the website via https://www.contosowebstore.com.
 
-| Input          | Usage |
-|----------------|-------|
-| none           | Customer can browse the application via HTTP (for example http://...). |
-| Switch present | Customer can browse the application via **`HTTPS`** (for example https://...).  When this switch is used in combination with `appGatewaySslCertPath` and `appGatewaySslCertPwd`, it enables a custom certificate on the Application Gateway. If you want to pass a custom certificate, use the .pfx certificate file with the process below to create the correct file. |  
+## (Optional) Using a custom host name 
 
-1.  Review the instructions on [creating a website SSL certificate](https://docs.microsoft.com/en-us/azure/app-service-web/web-sites-configure-ssl-certificate).
+> $customHostName
 
-2.  Retrieve your private key. This file will have a name similar to `www.contosowebstore.com\_private\_key.key`.
-
-3.  Retrieve your certificate. This file will have a name similar to `www.contosowebstore.com\_ssl\_certificate.cer`.
-
-4.  [Create a personal information exchange (pfx) file](https://technet.microsoft.com/en-us/library/dd261744.aspx) and protect this file with a password.
-
-## Optional Parameters
-
-> -customHostName
-
-Specifies a custom domain for the deployment. To be able to connect to the website, it is required that you provide a custom domain name, such as contoso.com. This is enabled by using the '-customHostName' switch in step 2. A custom domain name is not required to successfully deploy the solution for it to run, however you will not be able to connect to the website for demonstration purposes. For more information, see [How to buy and enable a custom domain name for Azure Web Apps](https://docs.microsoft.com/en-us/azure/app-service-web/custom-dns-web-site-buydomains-web-app). If this parameter is used you will be required to update the application's IP address with your DNS hosting provider (custom domain name). In the example, the customer’s DNS settings require the Application
-Gateway IP address to be updated as a DNS record on the hosting site. You can do this via the steps below.
+Specifies a custom domain for the deployment. To be able to connect to the website, it is required that you provide a custom domain name, such as contoso.com. The default, Azure-provided `azurewebsites.net` will be used if a custom domain name is not specified. A custom domain name is not required to successfully deploy the solution, however you will not be able to connect to the website for demonstration purposes. For more information, see [How to buy and enable a custom domain name for Azure Web Apps](https://docs.microsoft.com/en-us/azure/app-service-web/custom-dns-web-site-buydomains-web-app). If this variable is updated you will be required to update the application's IP address with your DNS hosting provider (custom domain name). In the example, the customer’s DNS settings require the Application
+Gateway IP address to be updated as a DNS record on the hosting site. You can do this via the steps below. 
 
 1.  Collect the Application Gateway IP address using the following PowerShell command:
 
@@ -119,5 +97,3 @@ This variable can be changed to a different location than the default value `eas
 ## Troubleshooting the deployment script
 
 If errors are experience when attempting to run the 1A-ContosoWebStoreDemoAzureResources.ps1 script, verify that the correct version PowerShell modules were imported when running the 0-Setup-AdministrativeAccountAndPermission.ps1 script. 
-
-
