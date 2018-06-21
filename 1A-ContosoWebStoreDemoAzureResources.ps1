@@ -626,14 +626,14 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Write-Host ("`n Step 11: Encrypt the SQL DB credit card information column" ) -ForegroundColor Green
         # Connect to your database.
         Add-Type -Path $sqlsmodll
-        Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName"
+        Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName."
         $connStr = "Server=tcp:" + $sqlServerName + ".database.windows.net,1433;Initial Catalog=" + "`"" + $databaseName + "`"" + ";Persist Security Info=False;User ID=" + "`"" + "sqladmin" + "`"" + ";Password=`"" + "$newPassword" + "`"" + ";MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
         $connection.ConnectionString = $connStr
         $connection.Connect()
         $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
         $database = $server.Databases[$databaseName]
-        Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName"
+        Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName."
 
         # Granting Users & ServicePrincipal full access on Keyvault
         Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
@@ -654,24 +654,25 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         else {
             try {
                 New-SqlColumnMasterKey -Name $cmkName -InputObject $database -ColumnMasterKeySettings $cmkSettings | Out-Null
-                Write-Host ("`t* Creating a new SQL Column Master Key") -ForegroundColor Yellow
+                Write-Host ("`t* Creating a new SQL Column Master Key.") -ForegroundColor Yellow
             }
             catch {
-                Write-Host -ForegroundColor Magenta "Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
+                Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
                 break
             }
         }
         Add-SqlAzureAuthenticationContext -ClientID $azureAdApplicationClientId -Secret $newPassword -Tenant $tenantID
         try {
             New-SqlColumnEncryptionKey -Name $cekName -InputObject $database -ColumnMasterKey $cmkName | Out-Null
-            Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Encryption Key") 
+            Write-Host -ForegroundColor Yellow ("`t* Creating a new SQL Column Encryption Key.") 
         }
         catch {
-            Write-Host -ForegroundColor Magenta "Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
+            Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
             break
         }
 
-        Write-Host -ForegroundColor Cyan "`t* SQL encryption has been successfully created. Encrypting SQL columns."
+        Write-Host -ForegroundColor Cyan "`t* SQL encryption has been successfully created."
+        Write-Host -ForegroundColor Yellow "`t* Encrypting SQL columns..."
 
         # Encrypt the selected columns (or re-encrypt, if they are already encrypted using keys/encrypt types, different than the specified keys/types.
         $ces = @()
@@ -690,7 +691,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     # Enabling the Azure Security Center Policies.
     try {
         Write-Host -ForegroundColor Green ("`n Step 12: Enabling policies for Azure Security Center" )
-        Write-Host "" 
         
         $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
         Write-Host -ForegroundColor Yellow "`t* Checking AzureRM Context."

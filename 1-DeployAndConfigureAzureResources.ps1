@@ -617,7 +617,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Write-Host -ForegroundColor Cyan "`t* Deployment '$deploymentName' has been submitted successfully."
         }            
         else {
-            Write-Host -ForegroundColor Magenta "The deployment failed to submit. Review all input parameters and attempt to redeploy the solution."
+            Write-Host -ForegroundColor Magenta "`t-> The deployment failed to submit. Review all input parameters and attempt to redeploy the solution."
         }
     }
     catch {
@@ -647,7 +647,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             Write-Host -ForegroundColor Cyan "`t* Deployment 'deploy-SQLServerSQLDb' has completed successfully."
         }
         else {
-            Write-Host -ForegroundColor Magenta "Deployment 'deploy-SQLServerSQLDb' has failed. Please resolve any reported errors through the portal, and attempt to redeploy the solution."
+            Write-Host -ForegroundColor Magenta "`t-> Deployment 'deploy-SQLServerSQLDb' has failed. Please resolve any reported errors through the portal, and attempt to redeploy the solution."
         }
     }
     catch {
@@ -788,7 +788,6 @@ Write-Host -ForegroundColor Green "`n###############################        Depl
 
     $templateInputTable = New-Object -TypeName Hashtable
     $templateInputTable.Add('sslORnon_ssl',$sslORnon_ssl)
-    $templateInputTable.Add('certData',$certData)
     $templateInputTable.Add('certPassword',$certPassword)
     $templateInputTable.Add('aseCertData',$aseCertData)
     $templateInputTable.Add('asePfxBlobString',$asePfxBlobString)

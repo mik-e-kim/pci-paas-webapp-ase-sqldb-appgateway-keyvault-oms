@@ -108,4 +108,3 @@ catch {
     Write-Host -ForegroundColor Magenta "`t-> Could not configure OMS for the specified resources. Verify the resources specified are available in the Azure portal before re-running this script."
     Break
 }
-

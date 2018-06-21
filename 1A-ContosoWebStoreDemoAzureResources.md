@@ -99,3 +99,9 @@ If this is updated, the variable set in `azuredeploydemo.json` under `automation
 ## Troubleshooting the deployment script
 
 If errors are experience when attempting to run the 1A-ContosoWebStoreDemoAzureResources.ps1 script, verify that the correct version PowerShell modules were imported when running the 0-Setup-AdministrativeAccountAndPermission.ps1 script. 
+
+## Next Steps (2-EnableOMSLoggingOnResources.ps1 and 3-GrantAccessOnDB.sql)
+
+Once the deployment is complete, `2-EnableOMSLoggingOnResources.ps1` can be run for enabling OMS logging on the resources deployed with the deployment. It is recommended to fully deploy the Contoso Web Store demo application solution into the environment before running this script. 
+
+After the application is deployed, `3-GrantAccessOnDB.sql` can be used for granting SQL DB access to the Azure Active Directory (AAD) users created in this solution.
