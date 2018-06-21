@@ -28,6 +28,9 @@
 ### Why does the ARM template fail to deploy a specific service?
 > Currently this solution requires that you deploy in US EAST. Limitations of service availability in all regions may prevent the solution from deploying storage accounts, or the AES. This solution was tested with the following resource group command: `New-AzureRmResourceGroup -Name [RESOURCE GROUP NAME] -Location "East US"`
 
+### Why does the Bastion VM fail to deploy in the templates?
+> During the BitLocker encryption steps of the deployment, for securing the Bastion VM, there is a known issue where the template will fail due to the VM being inaccessible during the encryption process. If experienced, a new Bastion VM can be deployed manually. If this is experienced, it is recommended to clean up previously deployed resources and attempt a new deployment. This experience is improving in Azure, but may occur while deploying the solution. 
+
 ### The deployment of my services takes over two hours. Is this normal?
 > The total time for deployment of the services is approximately 1.5 hours from the time **Purchase** is clicked on the ARM template. ASE takes 2 hours to provision. For more information, see: [How to deploy ASE](http://www.bizbert.com/bizbert/2016/01/07/AppServiceEnvironmentsHowToDeployAPIAppsToAVirtualNetwork.aspx). ASE may time out in the deployment, if running for 3+ hours, in which it is recommended users cancel the deployment, clean-up deployed assets, and attempt to redeploy the solution.  
 
