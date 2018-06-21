@@ -88,12 +88,12 @@ Begin{
                         if (!(Get-InstalledModule $module -ErrorAction SilentlyContinue)){
                             Write-Host "`t* Module $module does not exist. Attempting to install the module." -ForegroundColor Yellow
                             Install-Module $module -RequiredVersion $moduleNames[$module] -Force -AllowClobber
-                            Write-Host "`t* Module $module installed successfully." -ForegroundColor Yellow
+                            Write-Host "`t* Module $module installed successfully." -ForegroundColor Cyan
                         }
                         elseif((Get-InstalledModule $module).Version.ToString() -ne $moduleNames[$module]){
                             Write-Host "`t* Other version of Module found. Installing required version of module." -ForegroundColor Yellow
                             if (Install-Module $module -RequiredVersion $moduleNames[$module] -Force -AllowClobber){
-                                Write-Host "`t* Module $module installed successfully." -ForegroundColor Yellow
+                                Write-Host "`t* Module $module installed successfully." -ForegroundColor Cyan
                             }
                         }
                         else {
@@ -178,12 +178,12 @@ Process
             Write-Host "`t* Importing module - $module with required version $($requiredModules[$module])." -ForegroundColor Yellow 
             Import-Module -Name $module -RequiredVersion $requiredModules[$module]
             if (Get-Module -Name $module) {
-                Write-Host "`t* Module - $module imported successfully." -ForegroundColor Yellow
+                Write-Host "`t* Module - $module imported successfully." -ForegroundColor Cyan
             }
         }        
         If (Get-InstalledScript -Name Enable-AzureRMDiagnostics -ErrorAction SilentlyContinue)
         {
-            Write-Host "`t* All the required modules are now installed and imported successfully." -ForegroundColor Green
+            Write-Host "`t*** All the required modules are now installed and imported successfully. ***" -ForegroundColor Green
         }          
     }
     catch {
