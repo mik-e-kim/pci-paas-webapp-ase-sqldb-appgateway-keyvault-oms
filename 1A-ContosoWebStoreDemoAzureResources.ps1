@@ -445,14 +445,8 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         ########### Create Self-signed certificate for ASE ILB and Application Gateway ###########
         Write-Host -ForegroundColor Green "`n Step 5: Create a self-signed certificate for use with ASE ILB and Azure Application Gateway"
 
-            Write-Host -ForegroundColor Yellow "`t* Creating a new self-signed certificate for the Azure Application Gateway."
-            $fileName = "appgwfrontendssl"
-            $certificate = New-SelfSignedCertificateEx -Subject "CN=www.$customHostName" -SAN "www.$customHostName" -EKU "Server Authentication", "Client authentication" -NotAfter $((Get-Date).AddYears(5)) -KU "KeyEncipherment, DigitalSignature" -SignatureAlgorithm SHA256 -Exportable
-            $certThumbprint = "cert:\CurrentUser\my\" + $certificate.Thumbprint
-            Write-Host -ForegroundColor Cyan "`t`t-> Certificate created successfully. Exporting certificate into pfx format."
-            Export-PfxCertificate -cert $certThumbprint -FilePath "$scriptFolder\Certificates\$fileName.pfx" -Password $secNewPasswd | Out-null
-            $certData = Convert-Certificate -certPath "$scriptFolder\Certificates\$fileName.pfx"
-            $certPassword = $newPassword
+            $certData = "null"
+            $certPassword = "null"
 
             ### Generate self-signed certificate for ASE ILB and convert into base64 string
             Write-Host -ForegroundColor Yellow "`t* Creating a self-signed certificate for ASE Internal Load Balancer (ILB)."
