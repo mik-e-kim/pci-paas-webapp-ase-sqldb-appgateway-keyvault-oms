@@ -89,10 +89,12 @@ This command will return the IP address. For example:
 > $location
 
 This variable can be changed to a different location than the default value `eastus`. Changing this setting requires that the deployment is monitored to ensure its successful completion.
+If this is updated, the variables set in `azuredeploydemo.json` under `aseLocation` and `omsRegion` will need to be updated to match the corresponding region set for `$location`. 
 
 > $automationAcclocation
 
 This variable can be changed to a different location than the default value `eastus2`. Changing this setting requires that the deployment is monitored to ensure its successful completion.
+If this is updated, the variable set in `azuredeploydemo.json` under `automationRegion` will need to be updated to match the corresponding region set for `$automationAcclocation`. 
 
 ## Troubleshooting the deployment script
 
