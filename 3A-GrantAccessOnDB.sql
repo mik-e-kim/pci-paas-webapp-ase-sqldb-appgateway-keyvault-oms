@@ -1,6 +1,6 @@
 
 -- Please Connect with Active directory password authentication and SQL AD Admin credentials
-use PaymentProcessing
+use ContosoPayments
 Declare @domainName as varchar(50) = 'XXXX' -- Provide your domain name. This is the only change here
 
 
