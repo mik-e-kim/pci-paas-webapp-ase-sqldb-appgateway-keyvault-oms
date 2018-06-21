@@ -33,6 +33,9 @@
 
 ### How do I use this solution in my production deployment environment?
 > This solution (including the scripts, template, and documentation) is designed to help you build a pilot or demo site. Using this solution does not provide a ready-to-production solution for customers; it only illustrates the components required to build a secure and compliant end-to-end solution. For example, custom host names, SSL certificates, virtual network address spacing, NSG routing, existing Storage and databases, existing enterprise-wide OMS workspaces and solutions, Azure Key Vault rotation policies, usage of existing AD admins and RBAC roles, and usage of existing AD applications and service principals will require customization to meet the requirements of your custom solution in production.
+> The `1A-ContosoWebStoreDemoAzureResources.ps1` script (and associated scripts) can be used for fully deploying the demo solution to understand the components required for supporting a PCI-DSS compliant environment for payment processing. 
+> The `1-DeployAndConfigureAzureResources.ps1` script (and associated scripts) can be used for piloting the start of building a production environment for supporting PCI-DSS compliance for payment processing. 
+> NOTE: This script, independently, will not be able to provide a ready-to-production solution as configurational differences will need to be addressed, depending on the payment processing application utilized. 
 
 ### The scripts fail with a permission error. What do I do next?
 > The following logins should be tested whenever you restart your PowerShell session. This may not always be necessary, but it is strongly recommended to ensure the correct credentials are cached in your new session. At all times for this demo, log in as the **admin** user in our example.  
