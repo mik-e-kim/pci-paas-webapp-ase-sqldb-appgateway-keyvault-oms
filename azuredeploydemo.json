@@ -197,7 +197,7 @@
     "packageURI": "[concat(parameters('_artifactsLocation'), '/', variables('artifactsFolder'), '/', variables('webPackageName'), parameters('_artifactsLocationSasToken'))]",
     "nestedTemplateFolder": "nested",
     "aseTemplateFileName": "asedeploy.json",
-    "sqlServerTemplateFileName": "sqlserverdeploy.json",
+    "sqlServerTemplateFileName": "sqlserverdeploydemo.json",
     "commonTemplateFileName": "common.json",
     "webAppTemplateFileName": "webappdeploy.json",
     "vmBastionTemplateFileName": "vmBastion.json",
