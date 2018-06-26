@@ -697,64 +697,6 @@
       }
     },
     {
-      "name": "deploy-WebAppAndPackage",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-02-01",
-      "dependsOn": [
-        "[concat('Microsoft.Resources/deployments', '/' , 'deploy-ASE')]",
-        "[concat('Microsoft.Resources/deployments', '/' , 'deploy-CommonInfrastructure')]",
-        "[concat('Microsoft.Resources/deployments', '/' , 'deploy-SQLServerSQLDb')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplateFolder'), '/', variables('webAppTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "AadLoginUser": {
-            "value": "[parameters('sqlAdAdminUserName')]"
-          },
-          "AadLoginPassword": {
-            "value": "[parameters('sqlAdAdminUserPassword')]"
-          },
-          "siteName": {
-            "value": "[variables('webSiteName')]"
-          },
-          "location": {
-            "value": "[variables('aseLocation')]"
-          },
-          "ClientId": {
-            "value": "[parameters('azureAdApplicationClientId')]"
-          },
-          "ActiveDirectoryAppSecret": {
-            "value": "[parameters('azureAdApplicationClientSecret')]"
-          },
-          "aseName": {
-            "value": "[variables('aseName')]"
-          },
-          "tagValues": {
-            "value": "[variables('tagValues')]"
-          },
-          "storageAccountDiagnostics": {
-            "value": "[variables('storageAccountDiagnostics')]"
-          },
-          "packageURI": {
-            "value": "[variables('packageURI')]"
-          },
-          "customHostName": {
-            "value": "[parameters('customHostName')]"
-          },
-          "pricingTier":{
-            "value":"[parameters('pricingTier')]"
-          },
-          "capacity":{
-            "value":"[parameters('capacity')]"
-          }
-        }
-      }
-    },
-    {
       "name": "deploy-OMSWorkspaceSolutions",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
