@@ -236,7 +236,7 @@ Write-Host -ForegroundColor Yellow "`t* Verifying Azure Active Directory Domain.
 if ($azureADDomainName -match ".onmicrosoft.com") {Write-Host -ForegroundColor Green "`t`t`t*** Azure Active Directory Domain Verified! ***"}
 else {
     Write-Host -ForegroundColor Magenta "`n Azure Active Directory user is not a primary member of $azureAdDomainName."
-    Write-Host -ForegroundColor Magenta " Verify an Azure Active Directory Global Administrator associated to a *.onmicrosoft.com domain is used and run this script again." 
+    Write-Host -ForegroundColor Magenta "`t-> Verify an Azure Active Directory Global Administrator associated to a *.onmicrosoft.com domain is used and run this script again." 
     Break
 }
 
@@ -281,7 +281,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     $outputFolderPath = "$(Split-Path $MyInvocation.MyCommand.Path)\output"
     ########### Functions ###########
-    Write-Host -ForegroundColor Green "`n Step 2: Loading functions."
+    Write-Host -ForegroundColor Green "`n Step 2: Loading functions"
 
     <#
     .SYNOPSIS
@@ -672,11 +672,22 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Break
     }
     
-    # Add an Azure Active Directory administrator for SQL
+    # Add an Azure Active Directory administrator for SQL and grant key vault access to users and service principals
     try {
-        Write-Host -ForegroundColor Green ("`n Step 9: Updating access to SQL Server for the Azure Active Directory administrator account")
+        Write-Host -ForegroundColor Green ("`n Step 9: Updating Key Vault access and setting an Administrator for SQL Server")
         Write-Host -ForegroundColor Yellow ("`t* Granting SQL Server Active Directory Administrator access to $SqlAdAdminUserName.") 
         Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $SQLServerName -DisplayName $SqlAdAdminUserName | Out-Null
+
+        # Getting Keyvault reource object
+        Write-Host -ForegroundColor Yellow "`t* Getting the Key Vault resource object."
+        $keyVaultName = ($allResource | ? ResourceType -eq 'Microsoft.KeyVault/vaults').ResourceName
+
+        # Granting Users & ServicePrincipal full access on Keyvault
+        Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
+        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all  -PermissionsToSecrets all
+        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $SqlAdAdminUserName -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all 
+        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $azureAdApplicationClientId -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all
+        Write-Host -ForegroundColor Cyan ("`t`t-> Granted permissions to users and serviceprincipals.") 
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not grant SQL administrative rights. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
