@@ -610,6 +610,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
+        "deploy-ASE"
       ],
       "properties": {
         "mode": "Incremental",
