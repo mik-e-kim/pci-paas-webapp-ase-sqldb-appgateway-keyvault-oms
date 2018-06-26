@@ -179,7 +179,7 @@ Write-Host -ForegroundColor Yellow "`t* Verifying Azure Active Directory Domain.
 if ($azureADDomainName -match ".onmicrosoft.com") {Write-Host -ForegroundColor Green "`t`t`t*** Azure Active Directory Domain Verified! ***"}
 else {
     Write-Host -ForegroundColor Magenta "`n Azure Active Directory user is not a primary member of $azureAdDomainName."
-    Write-Host -ForegroundColor Magenta " Verify an Azure Active Directory Global Administrator associated to a *.onmicrosoft.com domain is used and run this script again." 
+    Write-Host -ForegroundColor Magenta "`t-> Verify an Azure Active Directory Global Administrator associated to a *.onmicrosoft.com domain is used and run this script again." 
     Break
 }
 
