@@ -610,7 +610,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-02-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments', '/' , 'deploy-WebAppAndPackage')]"
       ],
       "properties": {
         "mode": "Incremental",
