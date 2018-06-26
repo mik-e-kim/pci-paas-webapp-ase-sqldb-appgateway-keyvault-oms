@@ -372,7 +372,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             "Microsoft.Web"
         )
         if($resourceProviders.length) {
-            Write-Host -ForegroundColor Yellow "`t* Registering resource providers"
+            Write-Host -ForegroundColor Yellow "`t* Registering resource providers."
             foreach($resourceProvider in $resourceProviders) {
                 RegisterRP($resourceProvider);
             }
