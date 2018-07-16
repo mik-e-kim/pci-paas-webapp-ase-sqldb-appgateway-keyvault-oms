@@ -208,6 +208,8 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     Write-Host -ForegroundColor Yellow "`t* Checking AzureRM context version."
     if ((get-command get-azurermcontext).version -le "3.0"){
         Write-Host -ForegroundColor Magenta "`n This script requires PowerShell 3.0 or greater to run."
+        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
+        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
