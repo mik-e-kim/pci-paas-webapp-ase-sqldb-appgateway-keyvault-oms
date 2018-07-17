@@ -118,8 +118,6 @@ function loginToAzureRM {
 		} 
         else {
 			Write-Host -ForegroundColor Magenta "`t-> Credentials input are incorrect, invalid, or exceed the maximum number of retries. Verify the correct Azure account information is being used."
-			Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-			$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 			Exit
 		}
 	}
@@ -151,8 +149,6 @@ function loginToAzureAD {
 		} 
         else {
 			Write-Host -ForegroundColor Magenta "`t-> Credentials input are incorrect, invalid, or exceed the maximum number of retries. Verify the correct Azure account information is being used."
-			Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-			$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 			Exit
 		}
 	}
@@ -167,8 +163,6 @@ try {
 }
 catch {
     Write-Host -ForegroundColor Magenta "`t-> Azure login attempts failed. Verify your user credentials before running the deployment script again."
-    Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-    $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     Exit
 }
 
@@ -182,8 +176,6 @@ if ($azureADDomainName -match ".onmicrosoft.com") {Write-Host -ForegroundColor G
 else {
     Write-Host -ForegroundColor Magenta "`n Azure Active Directory user is not a primary member of $azureAdDomainName."
     Write-Host -ForegroundColor Magenta "`t-> Verify an Azure Active Directory Global Administrator associated to a *.onmicrosoft.com domain is used and run this script again." 
-    Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-    $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     Exit
 }
 
@@ -208,8 +200,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     Write-Host -ForegroundColor Yellow "`t* Checking AzureRM context version."
     if ((get-command get-azurermcontext).version -le "3.0"){
         Write-Host -ForegroundColor Magenta "`n This script requires PowerShell 3.0 or greater to run."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -324,8 +314,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not register the necessary resource providers. Verify the correct PowerShell modules are available in the session before attempting to run the script again."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit    
     }
     
@@ -360,8 +348,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create an artifacts storage account for storing configuration resources. Remove any previously created assets before attempting to run the script again."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -412,8 +398,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create necessary Azure Active Directory users for supporting the deployment. Remove any previously created assets before attempting to run the script again." 
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -449,8 +433,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create the Azure Active Directory application for supporting the deployment. Remove any previously created assets before attempting to run the script again." 
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -478,8 +460,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create the self-signed certificates for supporting the deployment. Remove any previously created assets before attempting to run the script again." 
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -495,8 +475,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not create the Azure Resource group for the deployment. Remove any previously created assets before attempting to run the script again." 
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -557,8 +535,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Deployment failed at a templated step. Review the error in the Azure portal. Before redeploying, remove any previously created assets and attempt the deployment again."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -589,8 +565,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> ARM template submission for 'deploy-SQLServerSQLDb' has failed. Please resolve any reported errors through the portal, and attempt to redeploy the solution."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -608,8 +582,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not update SQL server firewall rules. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -620,7 +592,7 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         Write-Host -ForegroundColor Yellow "`t* Getting the Key Vault resource object."
         $keyVaultName = ($allResource | ? ResourceType -eq 'Microsoft.KeyVault/vaults').ResourceName
         # Importing bacpac file
-        Write-Host -ForegroundColor Yellow ("`t* Importing the SQL backpac from the artifacts storage account." ) 
+        Write-Host -ForegroundColor Yellow ("`t* Importing the SQL bacpac from the artifacts storage account." ) 
         New-AzureRmSqlDatabaseImport -ResourceGroupName $resourceGroupName -ServerName $sqlServerName -DatabaseName $databaseName -StorageKeytype $artifactsStorageAccKeyType -StorageKey $artifactsStorageAccKey -StorageUri $sqlBacpacUri -AdministratorLogin 'sqladmin' -AdministratorLoginPassword $secNewPasswd -Edition Standard -ServiceObjectiveName S0 -DatabaseMaxSizeBytes 50000 | Out-Null
         Start-Sleep -s 100
         Write-Host -ForegroundColor Yellow ("`t* Updating Azure SQL DB Data Masking policy on the FirstName & LastName columns." )
@@ -631,8 +603,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not import the SQL bacpac and update the Azure SQL DB Data Masking policy. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
     
@@ -644,25 +614,29 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not grant SQL administrative rights. Please resolve any reported errors through the portal, and attempt to redeploy the solution."   
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
     # Encrypting Credit card information within database
     try {
-        Write-Host ("`n Step 11: Encrypt the SQL DB credit card information column" ) -ForegroundColor Green
-        # Connect to your database.
-        Add-Type -Path $sqlsmodll
-        Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName."
-        $connStr = "Server=tcp:" + $sqlServerName + ".database.windows.net,1433;Initial Catalog=" + "`"" + $databaseName + "`"" + ";Persist Security Info=False;User ID=" + "`"" + "sqladmin" + "`"" + ";Password=`"" + "$newPassword" + "`"" + ";MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-        $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
-        $connection.ConnectionString = $connStr
-        $connection.Connect()
-        $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
-        $database = $server.Databases[$databaseName]
-        Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName."
+        Write-Host -ForegroundColor Green ("`n Step 11: Encrypt the SQL DB credit card information column")
 
+        # Connect to your database.
+        do {
+            Add-Type -Path $sqlsmodll
+            Write-Host -ForegroundColor Yellow "`t* Connecting to database - $databaseName on $sqlServerName."
+            $connStr = "Server=tcp:" + $sqlServerName + ".database.windows.net,1433;Initial Catalog=" + "`"" + $databaseName + "`"" + ";Persist Security Info=False;User ID=" + "`"" + "sqladmin" + "`"" + ";Password=`"" + "$newPassword" + "`"" + ";MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
+            $connection.ConnectionString = $connStr
+            $connection.Connect()
+            $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
+            $database = $server.Databases[$databaseName]
+            Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName."
+        }
+        until (
+            $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
+        )
+            
         # Granting Users & ServicePrincipal full access on Keyvault
         Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
         Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all  -PermissionsToSecrets all
@@ -686,8 +660,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             }
             catch {
                 Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Master Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-                Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-                $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
                 Exit
             }
         }
@@ -698,8 +670,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
         }
         catch {
             Write-Host -ForegroundColor Magenta "`t-> Could not create a new SQL Column Encryption Key. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-            Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-            $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
             Exit
         }
 
@@ -717,8 +687,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Column encryption has failed."
         Write-Host -ForegroundColor Magenta "`t-> Could not successfully encrypt SQL columns. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
@@ -803,8 +771,6 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
     }
     catch {
         Write-Host -ForegroundColor Magenta "`t-> Could not set policies for Azure Security Center. Please verify deployment details, remove any previously deployed assets specific to this example, and attempt a new deployment."
-        Write-Host -ForegroundColor Yellow "`n                                    Press any key to exit..."
-        $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
         Exit
     }
 
