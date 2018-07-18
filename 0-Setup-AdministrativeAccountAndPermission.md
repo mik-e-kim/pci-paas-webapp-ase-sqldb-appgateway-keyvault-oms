@@ -6,11 +6,11 @@ This PowerShell script is used to verify pre-deployment requirements for the Pay
 This script can also be used for installing and loading the necessary PowerShell modules to successfully deploy the Azure Resource Manager templates. 
  
 # Description 
- This PowerShell script automates the installation and verification of the PowerShell modules for deploying this solution. This script also supports configuring an administrative user in Azure Active Directory for supporting the deployment. 
+This PowerShell script automates the installation and verification of the PowerShell modules for deploying this solution. This script also supports configuring an administrative user in Azure Active Directory for supporting the deployment. 
  
  > NOTE: This script MUST be run as *Local Administrator* with elevated privileges. For more information, see [Why do I need to run as local administrator?](https://social.technet.microsoft.com/Forums/scriptcenter/en-US/41a4ba3d-93fd-485b-be22-c877afff1bd8/how-to-run-a-powershell-script-in-admin-account?forum=ITCG)  
 
- Running this script is not required, but the deployment will fail if the following modules have not been properly configured and loaded into the PowerShell session:
+Running this script is not required, but the deployment will fail if the following modules have not been properly configured and loaded into the PowerShell session:
 - AzureRM
 - AzureAD
 - MSOnline
@@ -27,14 +27,30 @@ This script will attempt to install the following versions of these PowerShell m
 
 # Using the script
 
-## Installing the required modules for the PowerShell session
+The following scenarios are supported by the script:
+- Loading installed PowerShell modules. 
+    - This scenario is intended for users who only need the required PowerShell modules to be loaded before proceeding with the deployment scripts. Users should already have access to an Azure Active Directory (AAD) global administrator account for using with the deployment along with having the necessary required PowerShell modules available. 
+- Installing the required PowerShell modules. 
+    - This scenario is intended for users with access to an Azure Active Directory (AAD) global administrator account, but not the required PowerShell modules for running the deployment. Users will only be required to install the necessary PowerShell modules prior to running the deployment.  
+- Configuring an Azure Active Directory (AAD) global administrator. 
+    - This scenario is intended for users that would like to create and provision a new Azure Active Directory (AAD) global administrator account to use with the deployment. Users will need administrative access to an Azure Active Directory (AAD) instance for creating a new global administrator account.
+- Install required modules and provisioning an Azure Active Directory (AAD) global administrator.
+    - This scenario is intended for users that require both an Azure Active Directory (AAD) global administrator and the necessary PowerShell modules installed for running the deployment. 
+
+> NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
+
+## Loading installed PowerShell modules 
+```powershell
+.\0-Setup-AdministrativeAccountAndPermission.ps1 
+```
+If the necessary modules with the correct versions are available, the script can be run with no additional switches and parameters for loading the required modules. 
+
+## Installing the required PowerShell modules
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 -installModules
 ```
 This command will validate or install any missing PowerShell modules which are required for this foundational architecture.
-
-> NOTE: If an Azure Active Directory (AAD) global administrator account is accessible for using with the deployment, proceed with running the deployment scripts once the modules are installed (1A-ContosoWebStoreDemoAzureResources.ps1 or 1-DeployAndConfigureAzureResources.ps1). 
 
 ## Configuring an Azure Active Directory (AAD) global administrator
 
@@ -48,8 +64,6 @@ This command will validate or install any missing PowerShell modules which are r
 
 This command will deploy and load installed modules, and setup the solution on a **new subscription**. It will also create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character) for use with the deployment solution. 
  
-> NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
- 
 ## Install required modules and provisioning an Azure Active Directory (AAD) global administrator
 
 ```powershell
@@ -62,8 +76,6 @@ This command will deploy and load installed modules, and setup the solution on a
  ``` 
 This command will validate or install any missing PowerShell modules which are required for this foundational architecture. It will create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character). 
 
-> NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Running the script with the '-installModules' and '-configureGlobalAdmin' switches will provision an Azure Active Directory global administrator user and install the necessary PowerShell modules for running the deployment.  
- 
 # Required parameters
 
 > -azureADDomainName <String>
