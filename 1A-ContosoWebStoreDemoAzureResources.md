@@ -18,7 +18,15 @@ This PowerShell script is used to deploy the infrastructure for the Contoso Web 
 
 The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0-2.5 hours from when the script starts. If the App Service Environment takes greater than 2 hours to deploy, the deployment may time out. 
 
-## Example 1: Simple deployment 
+# Using the script
+
+The following scenario is supported by the script:
+- Simple deployment.
+    - This scenario is intended for users that want to better understand the solution through the Contoso Web Store example. This will deploy a PaaS environment for supporting a sample payment processing solution for the collection of basic user information and payment data. This scenario is not intended for use as a production environment and serves as a learning example for understanding the components of the deployment solution.
+
+> NOTE: The deployment script is a guided solution that will prompt for additional inputs if further customization is required. The 'Optional Variables' section outlines the customization options available for this deployment. 
+
+## Simple deployment 
     
 ```powershell
 .\1A-ContosoWebStoreDemoAzureResources.ps1 
@@ -57,12 +65,11 @@ Specifies the ID of a subscription. This needs to be provided for validating the
 
 > Resource group
 
-The default of `ContosoPCI-BP` will be the name of the resource group where the solution will be deployed.
+The default of `ContosoPCI-BP-YYYYMMDD-HHMM` will be the name of the resource group where the solution will be deployed.
 
 > Suffix
 
 `Blueprint` will be used as an identifier in the deployment of the solution. In a production environment, this can be any character or identifier, such as a business unit name.
-
 
 ## (Optional) Using a custom host name 
 
@@ -83,6 +90,8 @@ This command will return the IP address. For example:
 >` 172.16.0.10`
 
 2.  Log into your DNS hosting provider and update the A/AAAA record with the Application Gateway IP address.
+
+> NOTE: To support using a custom host name, the $customHostName variable will require an edit to be made in the PowerShell script. This is only recommended for users familiar with editing and adjusting PowerShell scripts. 
 
 ## Optional variables
 
