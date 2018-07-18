@@ -28,13 +28,13 @@ This script will attempt to install the following versions of these PowerShell m
 # Using the script
 
 The following scenarios are supported by the script:
-- Loading installed PowerShell modules. 
+- Loading the installed PowerShell modules. 
     - This scenario is intended for users who only need the required PowerShell modules to be loaded before proceeding with the deployment scripts. Users should already have access to an Azure Active Directory (AAD) global administrator account for using with the deployment along with having the necessary required PowerShell modules available. 
 - Installing the required PowerShell modules. 
     - This scenario is intended for users with access to an Azure Active Directory (AAD) global administrator account, but not the required PowerShell modules for running the deployment. Users will only be required to install the necessary PowerShell modules prior to running the deployment.  
 - Configuring an Azure Active Directory (AAD) global administrator. 
     - This scenario is intended for users that would like to create and provision a new Azure Active Directory (AAD) global administrator account to use with the deployment. Users will need administrative access to an Azure Active Directory (AAD) instance for creating a new global administrator account.
-- Install required modules and provisioning an Azure Active Directory (AAD) global administrator.
+- Installing the required modules and provisioning an Azure Active Directory (AAD) global administrator.
     - This scenario is intended for users that require both an Azure Active Directory (AAD) global administrator and the necessary PowerShell modules installed for running the deployment. 
 
 > NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
@@ -64,7 +64,7 @@ This command will validate or install any missing PowerShell modules which are r
 
 This command will deploy and load installed modules, and setup the solution on a **new subscription**. It will also create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character) for use with the deployment solution. 
  
-## Install required modules and provisioning an Azure Active Directory (AAD) global administrator
+## Installing the required modules and provisioning an Azure Active Directory (AAD) global administrator
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 
