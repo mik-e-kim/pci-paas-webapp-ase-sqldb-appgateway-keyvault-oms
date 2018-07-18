@@ -22,7 +22,13 @@ The estimated time to deploy the solution components is shown in the diagram bel
 
 # Using the script
 
-The deployment script is a guided solution that will prompt for additional inputs if further customization is required. The 'Optional Parameters' section outlines the customization options available for this deployment. 
+The following scenarios are supported by the script:
+- Simple deployment.
+    - This scenario is intended for users that want to deploy a pilot production environment using the deployment solution defaults. This will be set up and deployed using a self-signed certificate. This solution is intended to serve as a base for building a production environment for web applications specific to payment processing. 
+- Deploying with a custom certificate and a custom domain
+    - This scenario is intended for users that would like to utilize their existing domain and associated SSL certificate for deploying a pilot production environment. This solution is intended to serve as a base with a custom domain for building a production environment for web applications specific to payment processing.  
+
+> NOTE: The deployment script is a guided solution that will prompt for additional inputs if further customization is required. The 'Optional Parameters' section outlines the customization options available for this deployment. 
 
 ## Simple deployment 
     
@@ -33,7 +39,7 @@ The deployment script is a guided solution that will prompt for additional input
 This deployment script creates the required Azure Active Directory (AAD) accounts and generates a self-signed certificate for the ASE ILB and Application Gateway SSL endpoint using a provided custom domain.
 Users will be prompted for two logins, one for Azure Active Directory (AAD) and another for Azure Resource Manager (ARM). The only required inputs are guided prompts for providing an email address for SQL Threat Detection alerts and an Azure Subscription ID. 
 
-## Deploy with a custom certificate and a custom domain
+## Deploying with a custom certificate and a custom domain
 
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1
