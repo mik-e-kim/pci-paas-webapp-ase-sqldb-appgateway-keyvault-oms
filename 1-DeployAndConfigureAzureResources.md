@@ -20,7 +20,11 @@ This PowerShell script is used to deploy this Blueprint.
 
 The estimated time to deploy the solution components is shown in the diagram below. The total time required is approximately 2.0-2.5 hours from when the script starts. If the App Service Environment takes greater than 2 hours to deploy, the deployment may time out. 
 
-## Example 1: Simple deployment 
+# Using the script
+
+The deployment script is a guided solution that will prompt for additional inputs if further customization is required. The 'Optional Parameters' section outlines the customization options available for this deployment. 
+
+## Simple deployment 
     
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1 
@@ -29,7 +33,7 @@ The estimated time to deploy the solution components is shown in the diagram bel
 This deployment script creates the required Azure Active Directory (AAD) accounts and generates a self-signed certificate for the ASE ILB and Application Gateway SSL endpoint using a provided custom domain.
 Users will be prompted for two logins, one for Azure Active Directory (AAD) and another for Azure Resource Manager (ARM). The only required inputs are guided prompts for providing an email address for SQL Threat Detection alerts and an Azure Subscription ID. 
 
-## Example 2: Deploy with custom certificate and custom domain, and set password policy
+## Deploy with a custom certificate and a custom domain
 
 ```powershell
 .\1-DeployAndConfigureAzureResources.ps1
