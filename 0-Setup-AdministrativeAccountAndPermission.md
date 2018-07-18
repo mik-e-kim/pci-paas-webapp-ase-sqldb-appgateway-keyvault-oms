@@ -24,14 +24,14 @@ This script will attempt to install the following versions of these PowerShell m
 - AzureDiagnosticsAndLogAnalytics - 0.1
 - SqlServer - 21.0.17262
 
-## Example 1: Installing required modules
+## Installing the required modules
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 -installModules
 ```
 This command will validate or install any missing PowerShell modules which are required for this foundational architecture.
 
-## Example 2: Configuring an Azure Active Directory (AAD) global administrator
+## Configuring an Azure Active Directory (AAD) global administrator
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 
@@ -44,7 +44,7 @@ This command will validate or install any missing PowerShell modules which are r
  This command will deploy and load installed modules, and setup the solution on a **new subscription**. It will also create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character) for use with the deployment solution. 
  > NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
  
-## Example 3: Install required modules and Configure your global admin.
+## Install required modules and Configure your global admin.
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 
