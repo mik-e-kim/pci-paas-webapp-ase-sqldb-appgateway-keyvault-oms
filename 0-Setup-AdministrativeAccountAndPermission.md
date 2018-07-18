@@ -7,6 +7,7 @@ This script can also be used for installing and loading the necessary PowerShell
  
 # Description 
  This PowerShell script automates the installation and verification of the PowerShell modules for deploying this solution. This script also supports configuring an administrative user in Azure Active Directory for supporting the deployment. 
+ 
  > NOTE: This script MUST be run as *Local Administrator* with elevated privileges. For more information, see [Why do I need to run as local administrator?](https://social.technet.microsoft.com/Forums/scriptcenter/en-US/41a4ba3d-93fd-485b-be22-c877afff1bd8/how-to-run-a-powershell-script-in-admin-account?forum=ITCG)  
 
  Running this script is not required, but the deployment will fail if the following modules have not been properly configured and loaded into the PowerShell session:
@@ -24,12 +25,16 @@ This script will attempt to install the following versions of these PowerShell m
 - AzureDiagnosticsAndLogAnalytics - 0.1
 - SqlServer - 21.0.17262
 
-## Installing the required modules
+# Using the script
+
+## Installing the required modules for the PowerShell session
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 -installModules
 ```
 This command will validate or install any missing PowerShell modules which are required for this foundational architecture.
+
+> NOTE: If an Azure Active Directory (AAD) global administrator account is accessible for using with the deployment, proceed with running the deployment scripts once the modules are installed (1A-ContosoWebStoreDemoAzureResources.ps1 or 1-DeployAndConfigureAzureResources.ps1). 
 
 ## Configuring an Azure Active Directory (AAD) global administrator
 
@@ -41,10 +46,11 @@ This command will validate or install any missing PowerShell modules which are r
     -configureGlobalAdmin 
  ```
 
- This command will deploy and load installed modules, and setup the solution on a **new subscription**. It will also create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character) for use with the deployment solution. 
- > NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
+This command will deploy and load installed modules, and setup the solution on a **new subscription**. It will also create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character) for use with the deployment solution. 
  
-## Install required modules and Configure your global admin.
+> NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Before running this solution, verify a valid Azure Active Directory domain is accesible for deploying this solution with.  
+ 
+## Install required modules and provisioning an Azure Active Directory (AAD) global administrator
 
 ```powershell
 .\0-Setup-AdministrativeAccountAndPermission.ps1 
@@ -55,6 +61,8 @@ This command will validate or install any missing PowerShell modules which are r
     -installModules
  ``` 
 This command will validate or install any missing PowerShell modules which are required for this foundational architecture. It will create the user `adminXX@contosowebstore.com` with a randomly generated strong password (15 characters minimum, with uppercase and lowercase letters, and at least one number and one special character). 
+
+> NOTE: An active Azure Active Directory (AAD) domain name will be required for supporting this deployment. Running the script with the '-installModules' and '-configureGlobalAdmin' switches will provision an Azure Active Directory global administrator user and install the necessary PowerShell modules for running the deployment.  
  
 # Required parameters
 
