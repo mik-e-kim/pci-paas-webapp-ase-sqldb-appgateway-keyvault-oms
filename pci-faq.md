@@ -26,7 +26,10 @@
 > Strong passwords (minimum 15 characters, with upper and lower-case letters, at least 1 number, and 1 special character) are recommended throughout the solution.
 
 ### Why does the ARM template fail to deploy a specific service?
-> Currently this solution requires that you deploy in US EAST. Limitations of service availability in all regions may prevent the solution from deploying storage accounts, or the AES. This solution was tested with the following resource group command: `New-AzureRmResourceGroup -Name [RESOURCE GROUP NAME] -Location "East US"`
+> Currently this solution requires that you deploy in US EAST. Limitations of service availability in all regions may prevent the solution from deploying storage accounts, or the AES. Though a service may be deploying correctly through the templates, it may not be readily available during provisioning, which can result in false-positive errors in the deployment scripts. It is recommended to review messages in the Azure portal along with messages received in the PowerShell console. This solution was tested with the following resource group command: `New-AzureRmResourceGroup -Name [RESOURCE GROUP NAME] -Location "East US"`
+
+### Why does the ARM template fail to update the SQL database after it is deployed?
+> When redeploying either the pilot solution or the Contoso Web Store example, it is recommended that users clean up all assets created by previous deployments through these scripts. These scripts will run through automated creation of service and user accounts for supporting the deployment, and credential conflicts may be encountered if these users are not cleaned up prior to reattempting the deployment. 
 
 ### Why does the Bastion VM fail to deploy in the templates?
 > During the BitLocker encryption steps of the deployment, for securing the Bastion VM, there is a known issue where the template will fail due to the VM being inaccessible during the encryption process. If experienced, a new Bastion VM can be deployed manually. If this is experienced, it is recommended to clean up previously deployed resources and attempt a new deployment. This experience is improving in Azure, but may occur while deploying the solution. 
