@@ -629,17 +629,16 @@ Write-Host -ForegroundColor Green "`n###############################         Dep
             $connection = New-Object Microsoft.SqlServer.Management.Common.ServerConnection
             $connection.ConnectionString = $connStr
             $connection.Connect()
+            Start-Sleep -seconds 30
             $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
             $database = $server.Databases[$databaseName]
             Write-Host -ForegroundColor Cyan "`t`t-> Connected to database - $databaseName on $sqlServerName."
         }
-        until (
-            $server = New-Object Microsoft.SqlServer.Management.Smo.Server($connection)
-        )
-            
+        until ($database.Name -eq 'ContosoPayments')
+ 
         # Granting Users & ServicePrincipal full access on Keyvault
         Write-Host -ForegroundColor Yellow ("`t* Granting Key Vault access permissions to users and service principals.") 
-        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all  -PermissionsToSecrets all
+        Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $userPrincipalName -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all
         Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -UserPrincipalName $SqlAdAdminUserName -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all 
         Set-AzureRmKeyVaultAccessPolicy -VaultName $KeyVaultName -ServicePrincipalName $azureAdApplicationClientId -ResourceGroupName $resourceGroupName -PermissionsToKeys all -PermissionsToSecrets all
         Write-Host -ForegroundColor Cyan ("`t`t-> Granted permissions to users and serviceprincipals.") 
